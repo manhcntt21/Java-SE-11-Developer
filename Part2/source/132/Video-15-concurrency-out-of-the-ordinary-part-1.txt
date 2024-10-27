@@ -1,0 +1,243 @@
+**************************************
+snippet-01-ThreadInterfacesReview.java
+**************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  Submitting Callable vs Runnable vs Supplier
+*/
+
+// Don't forget that Thread implements Runnable interface but
+// Thread itself has a run() method which does nothing in this instance
+class ThreadDoesNothing extends Thread {
+    ThreadDoesNothing() {
+        System.out.println("ThreadDoesNothing created");
+    }
+}
+
+// Custom thread overrides the run() method
+class ThreadDoesSomething extends Thread {
+
+    public void run() {
+        // Unchecked Exception
+        throw new RuntimeException("Extended Thread chokes");
+    }
+}
+
+public class ThreadInterfacesReview {
+    public static void main(String[] args) {
+
+        //  Custom Thread does not override Thread's run() method
+        new ThreadDoesNothing().start();
+
+        // Custom Thread implements run(), throws RuntimeException
+        new ThreadDoesSomething().start();
+    }
+}
+
+
+**************************************
+snippet-02-ThreadInterfacesReview.java
+**************************************
+
+
+// Get instance of SingleThreadExecutor
+ExecutorService service = Executors.newSingleThreadExecutor();
+
+// Call execute on service, and pass it an instance of Thread
+service.execute(new ThreadDoesNothing());
+
+// Call submit on service, and pass it an instance of Thread
+Future<?> f = service.submit(new ThreadDoesSomething());
+
+service.shutdown();
+
+System.out.println(f);
+
+
+**************************************
+snippet-03-ThreadInterfacesReview.java
+**************************************
+
+
+public void run() {
+    // Unchecked Exception
+    throw new Exception("Extended Thread chokes");
+}
+
+
+**************************************
+snippet-04-ThreadInterfacesReview.java
+**************************************
+
+
+public void run() throws Exception {
+    // Unchecked Exception
+    throw new Exception("Extended Thread chokes");
+}
+
+
+**************************************
+snippet-05-ThreadInterfacesReview.java
+**************************************
+
+
+// Custom thread overrides the run() method
+class ThreadDoesSomething extends Thread {
+
+    public void run() {
+        // Unchecked Exception
+        throw new RuntimeException("Extended Thread chokes");
+    }
+}
+
+
+**************************************
+snippet-06-ThreadInterfacesReview.java
+**************************************
+
+
+// Runnable variable assigned a lambda expression that
+// throws unchecked exception
+Runnable r1 = () -> {
+    throw new RuntimeException(
+            "Runnable chokes in service.execute()");
+};
+try {
+    // execute method called which is void
+    service.execute(r1);
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+// Runnable variable assigned a lambda expression that
+// throws unchecked exception
+Runnable r2 = () -> {
+    throw new RuntimeException(
+            "Runnable chokes in service.submit()");
+};
+// submit method called which returns a Future
+Future<?> f1 = service.submit(r2);
+
+// Callable variable assigned a lambda expression that
+// throws unchecked exception
+Callable c = () -> {
+    throw new RuntimeException(
+            "Callable chokes in service.submit()");
+};
+// submit method called returns a Future
+Future f2 = service.submit(c);
+
+
+**************************************
+snippet-07-ThreadInterfacesReview.java
+**************************************
+
+
+System.out.println(f1);
+System.out.println(f2);
+
+
+**************************************
+snippet-08-ThreadInterfacesReview.java
+**************************************
+
+
+Runnable r1 = () -> {
+    throw new Exception (
+            "Runnable chokes in service.execute()");
+};
+
+
+**************************************
+snippet-09-ThreadInterfacesReview.java
+**************************************
+
+
+Callable c = () -> {
+    throw new Exception(
+            "Callable chokes in service.submit()");
+};
+
+
+**************************************
+snippet-10-ThreadInterfacesReview.java
+**************************************
+
+
+Callable c = () -> {
+    throw new Throwable(
+            "Callable chokes in service.submit()");
+};
+
+
+**************************************
+snippet-11-ThreadInterfacesReview.java
+**************************************
+
+
+service.execute(() -> {
+    throw new Exception(
+            "Callable chokes in service.submit()");
+});
+
+service.submit(() -> {
+    throw new Exception(
+            "Callable chokes in service.submit()");
+});
+
+
+**************************************
+snippet-12-ThreadInterfacesReview.java
+**************************************
+
+
+// Supplier
+Supplier s = () -> {
+    throw new RuntimeException(
+            "Suppplier::get chokes in service.submit()");
+};
+Future f3 = service.submit(s);
+
+
+**************************************
+snippet-13-ThreadInterfacesReview.java
+**************************************
+
+
+Future f3 = service.submit(s::get);
+
+
+**************************************
+snippet-14-ThreadInterfacesReview.java
+**************************************
+
+
+System.out.println(f3);
+
+
+**************************************
+snippet-15-ThreadInterfacesReview.java
+**************************************
+
+
+new Thread(() -> {
+    throw new RuntimeException(
+            "Lambda chokes in Thread constructed with Runnable");
+}).start();
+
+
+**************************************
+snippet-16-ThreadInterfacesReview.java
+**************************************
+
+
+new Thread(() -> {
+    throw new Exception(
+            "Lambda chokes in Thread constructed with Runnable");
+}).start();
+
+

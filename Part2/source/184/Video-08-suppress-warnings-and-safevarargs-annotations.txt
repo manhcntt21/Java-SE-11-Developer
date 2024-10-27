@@ -1,0 +1,147 @@
+***********************************
+snippet-03-HasDeprecatedMethod.java
+***********************************
+
+
+@SuppressWarnings({"deprecation","removal"})
+public static void main(String[] args) {
+
+
+***********************************
+snippet-04-HasDeprecatedMethod.java
+***********************************
+
+
+@SuppressWarnings("removal")
+public static void main(String[] args) {
+
+
+***********************************
+snippet-05-HasDeprecatedMethod.java
+***********************************
+
+
+/**
+  * Using javadoc tag @deprecated
+  *
+  * @deprecated As of release 1.5
+  */
+@Deprecated(
+        since = "1.5")
+public void doThisAlso() {
+    System.out.println("Doing this also");
+}
+
+
+***********************************
+snippet-06-HasDeprecatedMethod.java
+***********************************
+
+
+// Deprecated method usage...
+hasDeprecatedMethod.doThisAlso();
+
+
+***********************************
+snippet-07-HasDeprecatedMethod.java
+***********************************
+
+
+@SuppressWarnings({"deprecation", "removal"})
+public static void main(String[] args) {
+
+
+*******************************
+snippet-01-SafeArgsExample.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Using @SafeArgs
+*/
+
+import java.util.Arrays;
+
+// Create a simple generic class
+class MyClass<T> {
+    T name;
+
+    MyClass(T name) {
+        this.name = name;
+    }
+}
+
+public class SafeArgsExample {
+    public static void main(String[] args) {
+
+        // Generic Array creation is not allowed
+        MyClass<String>[] myArray = {
+                new MyClass<>("jane"),
+                new MyClass<>("joe")
+        };
+
+        // Yet you can do this...
+        doSomething(new MyClass<>("jane"), new MyClass<>("joe"));
+    }
+
+    // Method with parameterized typed MyClass varargs
+    public static void doSomething(MyClass<String>... myStuff) {
+        Arrays.stream(myStuff)
+                .forEach(System.out::println);
+    }
+}
+
+
+*******************************
+snippet-02-SafeArgsExample.java
+*******************************
+
+
+// Generic Array creation is not allowed
+MyClass[] myArray = {
+        new MyClass<>("jane"),
+        new MyClass<>("joe")
+};
+
+
+*******************************
+snippet-03-SafeArgsExample.java
+*******************************
+
+
+@SuppressWarnings("unchecked")
+public static void main(String[] args) {
+
+
+*******************************
+snippet-04-SafeArgsExample.java
+*******************************
+
+
+@SuppressWarnings("unchecked")
+// Method with parameterized typed MyClass varargs
+public static void doSomething(MyClass<String>... myStuff) {
+
+
+*******************************
+snippet-05-SafeArgsExample.java
+*******************************
+
+
+// Method with parameterized typed MyClass varargs
+@SuppressWarnings("varargs")
+public static void doSomething(MyClass<String>... myStuff) {
+
+
+*******************************
+snippet-06-SafeArgsExample.java
+*******************************
+
+
+@SafeVarargs
+// Method with parameterized typed MyClass varargs
+public static void doSomething(MyClass<String>... myStuff) {
+

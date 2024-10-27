@@ -1,0 +1,24 @@
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module sample.api {
+    requires sample.core;
+    requires sample.entity;
+    requires sample.service;
+    requires java.logging;
+}
+
+
+*************************************
+snippet-02-sample.api.Controller.java
+*************************************
+
+
+// query the module current class is in
+queryModuleData(EntityOne.class);
+
+// query the module current class is in
+queryModuleData(ServiceOne.class);
+

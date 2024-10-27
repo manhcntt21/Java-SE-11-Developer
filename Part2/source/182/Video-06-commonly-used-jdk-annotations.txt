@@ -1,0 +1,59 @@
+**********************************
+snippet-01-BuiltInAnnotations.java
+**********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Built In Annotations
+*/
+
+@FunctionalInterface
+interface Functionable {
+    void performSomeFunction();
+}
+
+public class BuiltInAnnotations implements Functionable {
+    public static void main(String[] args) {
+        new BuiltInAnnotations().performSomeFunction();
+    }
+
+    @Override
+    public void performSomeFunction() {
+        System.out.println("Overrode Functionable's method");
+    }
+}
+
+
+**********************************
+snippet-02-BuiltInAnnotations.java
+**********************************
+
+
+@Override
+public void performSomeFunction(String aString) {
+    System.out.println("Overrode Functionable's method");
+}
+
+
+**********************************
+snippet-03-BuiltInAnnotations.java
+**********************************
+
+
+void doSomethingElse();
+
+
+**********************************
+snippet-04-BuiltInAnnotations.java
+**********************************
+
+
+@FunctionalInterface
+abstract class FunctionalClass {
+    abstract void performSomeFunction();
+}
+
+

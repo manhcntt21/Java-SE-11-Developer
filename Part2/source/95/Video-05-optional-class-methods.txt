@@ -1,0 +1,86 @@
+*****************************
+snippet-10-OptionalTests.java
+*****************************
+
+
+List.of(joe, jane)
+        .stream()
+        .forEach(s -> System.out.println(s.getName() +
+                (s.getGpa()
+                        .or(() -> Optional.of(2.0f))
+                        .get() >= 2.0f
+                        ? " in good standing" :
+                        " on academic probation")));
+                        
+System.out.println("Joe's gpa = " + joe.getGpa());
+System.out.println("Jane's gpa = " + jane.getGpa());
+
+
+*****************************
+snippet-11-OptionalTests.java
+*****************************
+
+
+.or(() -> {
+    System.out.println(
+            "In Supplier Code for "+ s.getName());
+    return Optional.of(2.0f);
+})
+
+
+*****************************
+snippet-12-OptionalTests.java
+*****************************
+
+
+List.of(joe, jane)
+        .stream()
+        .forEach(s -> System.out.println(s.getName() +
+                (s.getGpa()
+                        .orElse(2.0f)
+                        >= 2.0f
+                        ? " in good standing" :
+                        " on academic probation")));
+
+
+*****************************
+snippet-13-OptionalTests.java
+*****************************
+
+
+private static float getGpaEstimate() {
+    System.out.println("--- in getGpaEstimate method");
+    return 2.0f;
+}
+
+
+*****************************
+snippet-14-OptionalTests.java
+*****************************
+
+
+.orElse(OptionalTests.getGpaEstimate())
+
+
+*****************************
+snippet-15-OptionalTests.java
+*****************************
+
+
+.orElseThrow()
+
+
+*****************************
+snippet-16-OptionalTests.java
+*****************************
+
+
+List.of(joe, jane)
+        .stream()
+        .forEach(s -> System.out.println(s.getName() +
+                (s.getGpa()
+                        .orElseGet(OptionalTests::getGpaEstimate)
+                        >= 2.0f
+                        ? " in good standing" :
+                        " on academic probation")));
+

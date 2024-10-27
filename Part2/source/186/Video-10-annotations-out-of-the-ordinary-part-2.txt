@@ -1,0 +1,228 @@
+*****************************************
+snippet-01-TypeUseAnnotationsExample.java
+*****************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 - Annotations
+Topic:  Reviewing where TYPE_USE annotation can be used
+*/
+
+// Using TYPE_USE Annotation for a type
+@TypeUseAnnotation
+class ParentOfClass {
+
+    // Using TYPE_USE Annotation fo a Constructor
+    @TypeUseAnnotation ParentOfClass() {
+        
+    }
+}
+
+interface ContainingInterface<@TypeUseAnnotation T> {
+
+    public T doThat();
+
+    // Using TYPE_USE Annotation for a method parameter
+    public default <S> S doThis(@TypeUseAnnotation S s) {
+        return s;
+    }
+}
+
+// USING TYPE_USE at the TYPE level
+@TypeUseAnnotation
+// Using TYPE_USE Annotation in extends and implements clauses
+public class TypeUseAnnotationsExample extends @TypeUseAnnotation ParentOfClass
+        implements @TypeUseAnnotation ContainingInterface<ParentOfClass> {
+
+    // Using TYPE_USE to annotate type for a field
+    private @TypeUseAnnotation String privateAttribute;
+
+    public static void main(String[] args) {
+
+        // Using TYPE_USE when creating a variable using a type argument.
+        ContainingInterface<@TypeUseAnnotation String> c;
+
+        try {
+            System.out.println("Testing Type Use");
+            // Using TYPE_USE annotation in a catch clause
+        } catch (@TypeUseAnnotation Exception e) {
+            // Using TYPE_USE annotation in a throws clause
+            throw new @TypeUseAnnotation RuntimeException("whoops");
+        }
+    }
+
+    // Using TYPE_USE for a method return type
+    public @TypeUseAnnotation TypeUseAnnotationsExample doThat() {
+        return this;
+    }
+}
+
+
+********************************************
+snippet-01-annotations.ModuleAnnotation.java
+********************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 - Annotations
+Topic:  Module Annotations
+*/
+
+package annotations;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+// Intended for Module
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ModuleAnnotation {
+
+}
+
+
+*********************************************
+snippet-01-annotations.PackageAnnotation.java
+*********************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 - Annotations
+Topic:  Package Annotation
+*/
+package annotations;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+// Intended for Package
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PackageAnnotation {
+
+}
+
+
+******************************
+snippet-01-test.TestClass.java
+******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Package & Module Annotations
+*/
+
+package test;
+
+public class TestClass {
+    public static void main(String[] args) {
+        new TestClass().doSomething();
+    }
+
+    public void doSomething() {
+        System.out.println("Do Something");
+    }
+}
+
+
+******************************
+snippet-02-test.TestClass.java
+******************************
+
+
+@PackageAnnotation
+package test;
+
+
+****************************
+snippet-01-package-info.java
+****************************
+
+
+@PackageAnnotation
+package test;
+
+import annotations.PackageAnnotation;
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+import annotations.ModuleAnnotation;
+
+@ModuleAnnotation
+module TestModuleAnnotations {
+  exports test;
+}
+
+
+********************************************
+snippet-02-annotations.ModuleAnnotation.java
+********************************************
+
+
+// Intended for Module
+@Target(ElementType.MODULE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ModuleAnnotation {
+
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module TestDeprecatedModule {
+    requires TestModuleAnnotations;
+}
+
+
+********************************
+snippet-01-abc.TestingClass.java
+********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Deprecating Package & Module
+*/
+
+package abc;
+
+import test.TestClass;
+
+public class TestingClass {
+    public static void main(String[] args) {
+        TestClass tc = new TestClass();
+        tc.doSomething();
+    }
+}
+
+
+***************************
+snippet-02-module-info.java
+***************************
+
+
+import annotations.ModuleAnnotation;
+
+@Deprecated
+@ModuleAnnotation
+module TestModuleAnnotations {
+    exports test;
+}
+

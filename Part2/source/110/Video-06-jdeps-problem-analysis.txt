@@ -1,0 +1,144 @@
+**********************************
+snippet-01-pkg.util.Utilities.java
+**********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+
+package pkg.util;
+
+public class Utilities {
+    public static void doUniversalStuff() {
+        System.out.println("module com.a.util: pkg.util.Utilities does something");
+    }
+}
+
+
+************************************
+snippet-01-pkg.util.StaticStuff.java
+************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+
+package pkg.util;
+
+public class StaticStuff {
+    public static void doStaticStuff() {
+        System.out.println("module com.b.util: pkg.util.StaticStuff does something");
+    }
+}
+
+
+***************************
+snippet-01-client.Main.java
+***************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+package client;
+
+import pkg.util.StaticStuff;
+import pkg.util.Utilities;
+
+public class Main {
+    public static void main(String[] args) {
+        Utilities.doUniversalStuff();
+        StaticStuff.doStaticStuff();
+    }
+}
+
+
+**********************************
+snippet-02-pkg.util.Utilities.java
+**********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+
+package pkg.util;
+
+import pkg.utility.StaticStuff;
+
+public class Utilities {
+    public static void doUniversalStuff() {
+        System.out.println("module com.a.util: pkg.util.Utilities does something");
+        StaticStuff.doStaticStuff("pkg.util.Utilities does something");
+    }
+    public static void doUniversalStuff(String text) {
+        System.out.println("module com.a.util: " + text);
+    }
+}
+
+
+************************************
+snippet-02-pkg.util.StaticStuff.java
+************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+
+package pkg.utility;
+
+import pkg.util.Utilities;
+
+public class StaticStuff {
+    public static void doStaticStuff() {
+        System.out.println("module com.b.util: pkg.util.StaticStuff does something");
+        Utilities.doUniversalStuff("pkg.util.StaticStuff does something");
+    }
+    public static void doStaticStuff(String text) {
+        System.out.println("module com.b.util: " + text);
+
+    }
+}
+
+
+***************************
+snippet-02-client.Main.java
+***************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Migration to Modular Application
+Topic:  Using Jdeps to identify issues before running on modular jdk
+*/
+package client;
+
+import pkg.utility.StaticStuff;
+import pkg.util.Utilities;
+
+public class Main {
+    public static void main(String[] args) {
+        Utilities.doUniversalStuff();
+        StaticStuff.doStaticStuff();
+    }
+}
+

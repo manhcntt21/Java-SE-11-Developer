@@ -1,0 +1,134 @@
+****************************
+snippet-06-StreamExtras.java
+****************************
+
+
+petPopulation.stream()
+        .collect(
+                // groupingBy with a single argument
+                Collectors.groupingBy(Pet::getType,
+                        TreeMap::new,
+                        Collectors.toList()))
+        .entrySet()
+        .stream()
+        .forEach(System.out::println);
+
+
+****************************
+snippet-07-StreamExtras.java
+****************************
+
+
+petPopulation.stream()
+        .distinct()
+        .collect(
+                // toMap requires at least 2 arguments
+                Collectors.toMap(
+                        p -> p.getType() + "_" + p.getName(),
+                        p -> p,
+                        // merge function ignored if not parallel
+                        (existing, replacement) -> existing,
+                        TreeMap::new))
+        .entrySet()
+        .stream()
+        .forEach(System.out::println);
+
+
+*****************************
+snippet-01-FlatMapExtras.java
+*****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Lambda Operations on Stream
+Topic:  Using flatMap
+*/
+
+import element.Pet;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FlatMapExtras {
+    public static void main(String[] args) {
+
+        // Create three different Lists of Pet objects
+        List<Pet> petList1 = List.of(new Pet(), new Pet(), new Pet());
+        List<Pet> petList2 = List.of(new Pet(), new Pet(), new Pet());
+        List<Pet> petList3 = List.of(new Pet(), new Pet(), new Pet());
+
+        // Create List of List of Pets
+        List<List<Pet>> listOfPets
+                = List.of(petList1, petList2, petList3);
+
+        System.out.println("--- List of lists ---");
+        listOfPets.forEach(System.out::println);
+
+        // Create a list (outside of the stream)
+        List<Pet> fullList = new ArrayList<Pet>();
+        listOfPets.stream()
+                // Collect all elements into fullList
+                .map(s -> fullList.addAll(s))
+                // Non-short-circuiting terminal operation
+                .allMatch(p -> p != null);
+        System.out.println("--- Full list ---");
+        fullList.forEach(System.out::println);
+
+    }
+}
+
+
+*****************************
+snippet-02-FlatMapExtras.java
+*****************************
+
+
+System.out.println("--- Create Full list with flatMap---");
+listOfPets.stream()
+        // Turns a List<Pet> to Stream<Pet>
+        .flatMap(s -> s.stream())
+        .collect(Collectors.toList())
+        .forEach(System.out::println);
+
+
+*****************************
+snippet-03-FlatMapExtras.java
+*****************************
+
+
+System.out.println("--- Create Full list with flatMap---");
+listOfPets.stream()
+        // Turns a List<Pet> to Stream<List<Pet>>
+        .flatMap(Stream::of)
+        .collect(Collectors.toList())
+        .forEach(System.out::println);
+
+
+*****************************
+snippet-04-FlatMapExtras.java
+*****************************
+
+
+System.out.println("--- Create Full list with flatMap---");
+listOfPets.stream()
+        // Turns a List<Pet> to Stream<List<Pet>>
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList())
+        .forEach(System.out::println);
+
+
+*****************************
+snippet-05-FlatMapExtras.java
+*****************************
+
+
+System.out.println("--- Putting it all together---");
+listOfPets.stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.groupingBy(Pet::getType))
+        .entrySet()
+        .stream()
+        .forEach(System.out::println);
+

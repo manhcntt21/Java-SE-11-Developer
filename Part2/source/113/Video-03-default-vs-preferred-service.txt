@@ -1,0 +1,142 @@
+***************************************************
+snippet-01-gamble.slots.impl.PayOffServiceImpl.java
+***************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Implementing the Service
+*/
+
+package gamble.slots.impl;
+
+import gamble.slots.spi.PayOffService;
+
+// This class implements the PayOffService
+public class PayOffServiceImpl implements PayOffService {
+
+    // This is a static provider method, one of the two ways to 
+    // configure a Provider 
+    public static PayOffService provider() {
+        System.out.println("PayOffServiceImpl is getting loaded" +
+                " by provider method");
+        return new PayOffServiceImpl();
+    }
+
+    // Provide implementations of the PayOffService's methods
+    public void hitTheJackPot() {
+        System.out.println("Whoo Hoo!  Quit your job baby.");
+    }
+
+    public void threeInRow(SlotType s) {
+        System.out.println("Dinner is on the house");
+    }
+
+    public void twoInRow(SlotType s) {
+        System.out.println("10 Credits to keep betting");
+    }
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module gamble.slots.impl {
+    requires gamble.slots.spi;
+    provides gamble.slots.spi.PayOffService with gamble.slots.impl.PayOffServiceImpl;
+}
+
+
+****************************************************
+snippet-01-njvirtual.slots.impl.ACPayOffService.java
+****************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Describing Service Components, Additional Provider using
+        public no args constructor
+*/
+
+package njvirtual.slots.impl;
+
+import gamble.slots.spi.PayOffService;
+
+// This provider implements the PayOffService with different prizes
+public class ACPayOffService implements PayOffService {
+
+    // This class has a public no args constructor, and does
+    // not declare a static provider method.
+    public ACPayOffService() {
+        System.out.println("Atlantic City PayOffService loaded");
+    }
+
+    public void hitTheJackPot() {
+        System.out.println("Voucher for free week at Caeser's");
+    }
+
+    public void threeInRow(SlotType s) {
+        System.out.println("Voucher for Free Show at Atlantis");
+    }
+
+    public void twoInRow(SlotType s) {
+        System.out.println("Voucher for 50 Trump tokens");
+    }
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module njvirtual.slots.impl {
+    requires gamble.slots.spi;
+    provides gamble.slots.spi.PayOffService with njvirtual.slots.impl.ACPayOffService;
+}
+
+
+********************************************
+snippet-02-gamble.slots.game.CherrySlot.java
+********************************************
+
+
+// Method that searches for providers and first one which is not
+// the default provider packaged with the application
+private PayOffService getPreferredService() {
+    List<PayOffService> providers =
+            ServiceLoader.load(PayOffService.class)
+                    .stream()
+                    .map(ServiceLoader.Provider::get)
+                    .collect(Collectors.toList());
+
+    // Give precedence to provider that is NOT the default provider
+    Optional<PayOffService> service = providers.stream()
+            .filter((s) ->
+                    !s.getClass().getName()
+                            .contains("gamble.slots.impl"))
+            .findFirst();
+
+    if (service.isEmpty()) {
+        return providers.stream().findFirst().orElse(null);
+    } else return service.get();
+}
+
+
+********************************************
+snippet-03-gamble.slots.game.CherrySlot.java
+********************************************
+
+
+// Method that plays the game and provides winnings
+private void playGame() {
+
+    PayOffService p = getPreferredService();
+
+

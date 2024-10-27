@@ -1,0 +1,326 @@
+*****************************************
+snippet-01-test.impl.TestProviderTwo.java
+*****************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service extras
+*/
+
+package test.impl;
+
+// This class implements the TestService interface
+public class TestProviderTwo implements test.spi.TestService {
+
+    // Public explicit no args constructor
+    public TestProviderTwo() {
+        System.out.println("TestProviderTwo constructor");
+    }
+
+    // method overrides the abstract method from TestService interface
+    public void provideTheService() {
+        System.out.println("TestProviderTwo");
+    }
+}
+
+
+***************************
+snippet-02-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProvider;
+    provides test.spi.TestService with test.impl.TestProviderTwo;
+}
+
+
+***************************
+snippet-03-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProvider,
+            test.impl.TestProviderTwo;
+}
+
+
+*********************************************
+snippet-01-test.impl.TestProviderFactory.java
+*********************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service extras
+*/
+
+package test.impl;
+
+import test.spi.TestService;
+
+import java.util.Random;
+
+// This class does NOT implement the TestService interface
+public class TestProviderFactory {
+
+    // This class has a provider method which returns an
+    // instance of a TestService
+    public static TestService provider() {
+        System.out.println("TestProviderFactory provider method" +
+                " being executed");
+
+        // Maybe you have some logic to figure out which Provider
+        // will be used, in this case, it's random
+        int choice = new Random().nextInt(2);
+
+        // Return one or the other Providers that implement TestService
+        if (choice == 1) return new TestProvider();
+        return new TestProviderTwo();
+    }
+}
+
+
+***************************
+snippet-04-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProvider,
+            test.impl.TestProviderTwo,
+            test.impl.TestProviderFactory;
+}
+
+
+***************************
+snippet-05-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProviderFactory;
+}
+
+
+*********************************************
+snippet-01-test.impl.EnhancedTestService.java
+*********************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Extended the service interface
+*/
+
+package test.impl;
+
+public interface EnhancedTestService extends test.spi.TestService {
+
+}
+
+
+*****************************************
+snippet-02-test.impl.TestProviderTwo.java
+*****************************************
+
+
+// This class implements the EnhancedTestService interface
+public class TestProviderTwo implements test.impl.EnhancedTestService {
+
+
+***************************
+snippet-06-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProviderFactory,
+            test.impl.TestProviderTwo;
+    provides test.impl.EnhancedTestService with test.impl.TestProviderTwo;
+}
+
+
+***************************
+snippet-07-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.impl.EnhancedTestService with test.impl.TestProviderTwo;
+}
+
+
+***************************
+snippet-08-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    exports test.impl;
+    provides test.impl.EnhancedTestService with test.impl.TestProviderTwo;
+}
+
+
+***************************
+snippet-09-module-info.java
+***************************
+
+
+module test.impl {
+    requires test.spi;
+    provides test.spi.TestService with test.impl.TestProviderTwo;
+}
+
+
+***************************************
+snippet-01-variance.spi.MyService1.java
+***************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service Extras
+*/
+
+package variance.spi;
+
+public interface MyService1 {
+    void doSomething();
+}
+
+
+***************************************
+snippet-01-variance.spi.MyService2.java
+***************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service Extras
+*/
+
+package variance.spi;
+
+public interface MyService2 {
+    void doSomething();
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module variance.spi {
+    exports variance.spi;
+}
+
+
+*******************************************
+snippet-01-variance.impl.MyServiceImpl.java
+*******************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service Extras
+*/
+
+package variance.impl;
+
+import variance.spi.MyService1;
+import variance.spi.MyService2;
+
+public class MyServiceImpl implements MyService1, MyService2 {
+
+    public void doSomething() {
+        System.out.println("MyServiceImpl is Doing Something");
+    }
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module variance.impl {
+    requires variance.spi;
+    provides variance.spi.MyService1 with variance.impl.MyServiceImpl;
+    provides variance.spi.MyService2 with variance.impl.MyServiceImpl;
+}
+
+
+****************************************
+snippet-01-variance.consumer.Client.java
+****************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 10: Services in Modular Application
+Topic:  Service Extras
+*/
+
+package variance.consumer;
+
+import variance.spi.MyService1;
+import variance.spi.MyService2;
+
+import java.util.ServiceLoader;
+
+public class Client {
+    public static void main(String[] args) {
+
+        MyService2 s1 = ServiceLoader.load(MyService2.class)
+                // ServiceLoader.findFirst() returns an Optional
+                .findFirst()
+                // Need to use .get() on Optional to get a PayOffService
+                .get();
+
+        MyService1 s2 = ServiceLoader.load(MyService1.class)
+                // ServiceLoader.findFirst() returns an Optional
+                .findFirst()
+                // Need to use .get() on Optional to get a PayOffService
+                .get();
+
+        s1.doSomething();
+        s2.doSomething();
+    }
+}
+
+
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module variance.consumer {
+    requires variance.spi;
+    uses variance.spi.MyService1;
+    uses variance.spi.MyService2;
+}
+

@@ -1,0 +1,184 @@
+****************************
+snippet-07-TreeExamples.java
+****************************
+
+
+Set<TreeElement> firstSet = Set.copyOf(treeSet);
+Set<TreeElement> secondSet = new TreeSet(Set.copyOf(treeSet));
+
+firstSet.add(new TreeElement(50, "Harold"));
+secondSet.add(new TreeElement(50, "Harold"));
+
+
+*****************************
+snippet-01-WrapperLimits.java
+*****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 4: Generics and Collections
+Topic:  Wrappers and Generics
+*/
+
+import java.util.Arrays;
+
+public class WrapperLimits {
+    public static void main(String[] args) {
+
+        // Here a float literal can be assigned to a double variable
+        double d = 32.0f;
+
+        // Here a float literal can be part of array initialization for
+        // a double array
+        double[] doubleArray = new double[]{32.0f};
+
+        System.out.println("Primitive assignment, float to double: "
+                + d);
+        System.out.println("Primitive array initialization assignment," +
+                " float to double: " + Arrays.toString(doubleArray));
+
+    }
+}
+
+
+*****************************
+snippet-02-WrapperLimits.java
+*****************************
+
+
+// An autoboxed float -> Float cannot be assigned to a Double
+Double wrapper= 32.0f;
+
+// An array of double wrappers cannot be initialized to array
+// of primitive float
+Double[] wrappedArray = new Double[]{32.0f};
+
+
+*****************************
+snippet-03-WrapperLimits.java
+*****************************
+
+
+// An autoboxed float -> Float cannot be assigned to a Double
+Float wrapper = 32.0f;
+
+// An array of double wrappers cannot be initialized to array
+// of primitive float
+Float[] wrappedArray = new Float[]{32.0f};
+
+
+*****************************
+snippet-04-WrapperLimits.java
+*****************************
+
+
+// A List of float literals cannot be passed to constructor of Double
+List<Double> doubleList = new ArrayList<Double>(List.of(32.2f));
+
+// Cannot add a literal float to a List of Double
+List<Double> doubleList2 = new ArrayList<Double>();
+doubleList2.add(32.2f);
+
+
+*****************************
+snippet-05-WrapperLimits.java
+*****************************
+
+
+// Only double literals can be passed to constructor of Double
+List<Double> doubleList = new ArrayList<Double>(List.of(32.2));
+
+// Only double literal can be added to List of Double
+List<Double> doubleList2 = new ArrayList<Double>();
+doubleList2.add(32.2);
+
+
+*****************************
+snippet-06-WrapperLimits.java
+*****************************
+
+
+// Typing only on the assignment side does not place compiler error
+// restrictions on elements added.
+List numberList = new ArrayList<Integer>();
+
+
+*****************************
+snippet-07-WrapperLimits.java
+*****************************
+
+
+numberList.add("Hello");
+numberList.add(3.2f);
+numberList.add(List.of("a", "b"));
+
+
+*****************************
+snippet-08-WrapperLimits.java
+*****************************
+
+
+List<Number> integerList = new ArrayList<Integer>();
+
+
+*****************************
+snippet-09-WrapperLimits.java
+*****************************
+
+
+List integerList = new ArrayList<Integer>();
+
+
+*****************************
+snippet-10-WrapperLimits.java
+*****************************
+
+
+List<?> integerList = new ArrayList<Integer>();
+integerList.add(5);
+
+
+*****************************
+snippet-11-WrapperLimits.java
+*****************************
+
+
+List<? extends Number> integerList = new ArrayList<Integer>();
+integerList.add(5);
+
+
+*****************************
+snippet-12-WrapperLimits.java
+*****************************
+
+
+List<? super Integer> integerList = new ArrayList<Integer>();
+integerList.add(5);
+
+
+*****************************
+snippet-13-WrapperLimits.java
+*****************************
+
+
+integerList.add(10L);
+
+
+*****************************
+snippet-14-WrapperLimits.java
+*****************************
+
+
+integerList.add((int) 10L);
+
+
+*****************************
+snippet-15-WrapperLimits.java
+*****************************
+
+
+integerList.add((Integer) 10L);
+
+

@@ -1,0 +1,99 @@
+******************************
+snippet-10-ParallelExtras.java
+******************************
+
+
+// Using reduce with StringBuilder
+StringBuilder firstResult = set
+        .parallelStream()
+
+
+******************************
+snippet-11-ParallelExtras.java
+******************************
+
+
+// Using collect with StringBuilder
+StringBuilder secondResult = set
+        .parallelStream()
+
+
+******************************
+snippet-12-ParallelExtras.java
+******************************
+
+
+// Using reduce with StringBuilder
+StringBuilder firstResult = set
+        .parallelStream()
+        .map(s -> new StringBuilder(s))
+        // Requires Identity(StringBuilder), BiFunction, BinaryOperator
+        .reduce(new StringBuilder(),
+                (a, b) -> b.append(a),
+                (a, b) -> a.append(b));
+
+
+******************************
+snippet-13-ParallelExtras.java
+******************************
+
+
+// Using collect with StringBuilder
+StringBuilder secondResult = set
+        .parallelStream()
+        .map(s -> new StringBuilder(s))
+        // collect requires Supplier, BiConsumer, BiConsumer
+        .collect(StringBuilder::new,
+                (a, b) -> b.append(a),
+                (a, b) -> a.append(b));
+
+
+******************************
+snippet-14-ParallelExtras.java
+******************************
+
+
+// Using reduce with StringBuilder
+StringBuilder firstResult = set
+        .stream()
+        .map(s -> new StringBuilder(s))
+        // Requires Identity(StringBuilder), BiFunction, BinaryOperator
+        .reduce(new StringBuilder("a"),
+                (a, b) -> b.append(a),
+                (a, b) -> a.append(b));
+
+
+******************************
+snippet-15-ParallelExtras.java
+******************************
+
+
+// Using collect with StringBuilder
+StringBuilder secondResult = set
+        .stream()
+        .map(s -> new StringBuilder(s))
+        // collect requires Supplier, BiConsumer, BiConsumer
+        .collect(() -> { return new StringBuilder("a"); },
+                (a, b) -> b.append(a),
+                (a, b) -> a.append(b));
+
+
+******************************
+snippet-16-ParallelExtras.java
+******************************
+
+
+// Using reduce with StringBuilder
+StringBuilder firstResult = set
+        .parallelStream()
+
+
+******************************
+snippet-17-ParallelExtras.java
+******************************
+
+
+// Using collect with StringBuilder
+StringBuilder secondResult = set
+        .parallelStream()
+

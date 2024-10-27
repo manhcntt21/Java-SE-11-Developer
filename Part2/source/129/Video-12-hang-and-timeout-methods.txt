@@ -1,0 +1,273 @@
+***************************************
+snippet-04-LinkedBlockingDequeAdds.java
+***************************************
+
+
+// Schedule a thread to pop an element from the queue
+ScheduledExecutorService scheduledService =
+        Executors.newScheduledThreadPool(1);
+
+var thread = scheduledService.scheduleAtFixedRate(() -> {
+    System.out.println("popping queue");
+    System.out.println("Got " + dequeBlocked.pop());
+    System.out.println("dequeBlocked " + dequeBlocked);
+
+}, 2, 2, TimeUnit.SECONDS);
+
+// Test Put Methods
+usePutMethods(dequeBlocked);
+
+Thread.sleep(5000);
+scheduledService.shutdown();
+
+// Wait no longer than 20 seconds for completion confirmation
+scheduledService.awaitTermination(20, TimeUnit.SECONDS);
+
+
+***************************************
+snippet-05-LinkedBlockingDequeAdds.java
+***************************************
+
+
+// This method uses the timeout versions of offer methods
+private static void useOfferMethodsTimed(
+        BlockingDeque<String> dequeBlocked)
+        throws InterruptedException {
+    // Adding data with offer, adds data to the tail of the queue
+    boolean wasSuccessful = dequeBlocked.offer("Jane", 1, TimeUnit.SECONDS);
+    dequeBlocked.offer("Anne", 1, TimeUnit.SECONDS);
+
+    // offerLast is equivalent to offer, adds data to the tail
+    wasSuccessful = dequeBlocked.offerLast("John", 1, TimeUnit.SECONDS);
+
+    // offerFirst adds data to the head
+    wasSuccessful = dequeBlocked.offerFirst("Mary", 1, TimeUnit.SECONDS);
+    System.out.println(dequeBlocked);
+
+    // Any offer method will return a false if unable to add element
+    wasSuccessful =
+            dequeBlocked.offer("Harold", 1, TimeUnit.SECONDS);
+    if (wasSuccessful)
+        System.out.println("Harold was added successfully");
+    else
+        System.out.println("Harold decided not to wait longer" +
+                " than 1 second");
+
+    wasSuccessful = dequeBlocked.offerFirst("Ida", 15, TimeUnit.SECONDS);
+    if (wasSuccessful)
+        System.out.println("Ida was added successfully");
+    else
+        System.out.println("Ida decided not to wait longer" +
+                " than 15 seconds");
+}
+
+
+***************************************
+snippet-06-LinkedBlockingDequeAdds.java
+***************************************
+
+
+// Test offer methods with timeout
+useOfferMethodsTimed(dequeBlocked);
+
+
+****************************************
+snippet-01-LinkedBlockingDequePolls.java
+****************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  LinkedBlockingDeque, Poll/Remove methods
+*/
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.*;
+
+public class LinkedBlockingDequePolls {
+    public static void main(String[] args) throws InterruptedException {
+
+        List staticList = List.of("Jane", "Ralph", "Anne", "Mary", "Ralph",
+                "Anne", "Harold", "Anne", "John", "Carol");
+
+        // Create an empty blocking deque with no initial capacity
+        BlockingDeque<String> dequeBlocked =
+                new LinkedBlockingDeque<>(staticList);
+
+        // Test Poll Methods
+        usePollMethods(dequeBlocked);
+        dequeBlocked.addAll(staticList);
+
+        // Test Remove Methods
+        useRemoveMethods(dequeBlocked);
+        dequeBlocked.addAll(staticList);
+
+        // Test Pop Method
+        usePopMethod(dequeBlocked);
+        dequeBlocked.addAll(staticList);
+    }
+
+    // This method uses poll, pollFirst, pollLast methods
+    private static void usePollMethods(BlockingDeque<String> dequeBlocked) {
+        System.out.println("------------ Poll Methods -------------");
+        System.out.println("Original state of Deque: " + dequeBlocked);
+
+        // Removing data with remove, removes data from the head of the queue
+        String dequedPerson = dequeBlocked.poll();
+        System.out.println("After poll(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        // removeLast removes data from the tail
+        dequedPerson = dequeBlocked.pollLast();
+        System.out.println("After pollLast(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        // removeFirst removes data from the head, same as remove()
+        dequedPerson = dequeBlocked.pollFirst();
+        System.out.println("After pollFirst(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        dequeBlocked.clear();
+        System.out.println("After clearing the deque");
+        // Any remove method will return a false if unable to remove element
+        dequedPerson = dequeBlocked.poll();
+        System.out.println("After poll(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+    }
+
+    // This method uses remove(), remove(e), removeFirst(), removeLast(),
+    // also removeFirstOccurrence(e) and removeLastOccurrence(e)
+    private static void useRemoveMethods(
+            BlockingDeque<String> dequeBlocked) {
+        System.out.println("------------ Remove Methods -------------");
+        System.out.println("Original state of Deque: " + dequeBlocked);
+
+        // Removing data with remove, removes data from the head of queue
+        String dequedPerson = dequeBlocked.remove();
+        System.out.println("After remove(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        // Removing data with remove, passing an object, removes 1st element
+        // that equals object passed, returns a boolean, and not the element
+        boolean wasRemoved = dequeBlocked.remove("Ralph");
+        System.out.println("After remove(Ralph), wasRemoved = "
+                + wasRemoved + " : " + dequeBlocked);
+
+        // removeLast removes data from the tail
+        dequedPerson = dequeBlocked.removeLast();
+        System.out.println("After removeLast(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        // removeFirst removes data from the head, same as remove()
+        dequedPerson = dequeBlocked.removeFirst();
+        System.out.println("After removeFirst(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        // removeFirstOccurrence(Object o) is same as removeFirst(Object o)
+        wasRemoved = dequeBlocked.removeFirstOccurrence("Anne");
+        System.out.println(
+                "After removeFirstOccurrence(Anne), wasRemoved = "
+                        + wasRemoved + " : " + dequeBlocked);
+
+        // removeLastOccurrence removes last occurrence
+        wasRemoved = dequeBlocked.removeLastOccurrence("Anne");
+        System.out.println(
+                "After removeLastOccurrence(Anne), wasRemoved = "
+                        + wasRemoved + " : " + dequeBlocked);
+
+        wasRemoved = dequeBlocked.removeLastOccurrence("Anne");
+        System.out.println("" +
+                "After removeLastOccurrence(Anne), wasRemoved = "
+                + wasRemoved + " : " + dequeBlocked);
+        try {
+            dequeBlocked.clear();
+            System.out.println("After clearing the deque");
+            // Any noargs remove method (remove, removeFirst(),
+            // removeLast()) throws exception if queue is empty
+            dequedPerson = dequeBlocked.remove();
+
+        } catch (NoSuchElementException ise) {
+            System.out.println("Queue empty: " + ise);
+        }
+
+        // Other remove methods that accept an argument return false
+        // if queue is empty.
+        wasRemoved = dequeBlocked.removeLastOccurrence("Anne");
+        System.out.println(
+                "After removeLastOccurrence(Anne), wasRemoved = "
+                        + wasRemoved + " : " + dequeBlocked);
+
+    }
+
+    // This method uses pop
+    private static void usePopMethod(BlockingDeque<String> dequeBlocked) {
+        System.out.println("------------ Pop Method -------------");
+        System.out.println("Original state of Deque: " + dequeBlocked);
+
+        // pop() is same as remove(), removes element from head and
+        // returns element.
+        String dequedPerson = dequeBlocked.pop();
+        System.out.println("After pop(), " + dequedPerson +
+                " was removed: " + dequeBlocked);
+
+        try {
+            dequeBlocked.clear();
+            System.out.println("After clearing the deque");
+            // pop method on empty queue throws exception, like remove()
+            dequedPerson = dequeBlocked.pop();
+
+        } catch (NoSuchElementException ise) {
+            System.out.println("Queue empty: " + ise);
+        }
+    }
+}
+
+
+****************************************
+snippet-02-LinkedBlockingDequePolls.java
+****************************************
+
+
+// This method uses take, takeFirst, takeLast methods which block 
+// when queue is empty
+private static void useTakeMethods(BlockingDeque<String> dequeBlocked)
+        throws InterruptedException {
+    System.out.println("------------ Take Methods -------------");
+    System.out.println("Original state of Deque: " + dequeBlocked);
+
+    // Removing data with take, removes data from the head of the queue
+    String dequedPerson = dequeBlocked.take();
+    System.out.println("After take(), " + dequedPerson +
+            " was removed: " + dequeBlocked);
+
+    // takeLast removes data from the tail
+    dequedPerson = dequeBlocked.takeLast();
+    System.out.println("After takeLast(), " + dequedPerson +
+            " was removed: " + dequeBlocked);
+
+    // takeFirst removes data from the head, same as take()
+    dequedPerson = dequeBlocked.takeFirst();
+    System.out.println("After takeFirst(), " + dequedPerson +
+            " was removed: " + dequeBlocked);
+
+    dequeBlocked.clear();
+    System.out.println("After clearing the deque");
+    // Any take method will block if queue is empty
+    dequedPerson = dequeBlocked.take();
+    System.out.println("After take(), " + dequedPerson +
+            " was removed: " + dequeBlocked);
+}
+
+
+****************************************
+snippet-03-LinkedBlockingDequePolls.java
+****************************************
+
+
+//Test Take Methods
+useTakeMethods(dequeBlocked);
+
+

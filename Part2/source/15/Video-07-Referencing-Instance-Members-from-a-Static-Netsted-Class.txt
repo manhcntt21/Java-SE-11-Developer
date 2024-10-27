@@ -1,0 +1,37 @@
+***********************************
+snippet-02-nest.EnclosingClass.java
+***********************************
+
+
+// instance method
+public String getInstanceName() {
+    System.out.println(outerName);
+    return "getInstanceName() = " + this.instanceName;
+}
+
+
+***********************************
+snippet-03-nest.EnclosingClass.java
+***********************************
+
+
+// instance method
+public String getInstanceName() {
+    // Reference a non-static method from the enclosing class...
+    doSomethingOnInstance();
+    return "getInstanceName() = " + this.instanceName;
+}
+
+
+***********************************
+snippet-04-nest.EnclosingClass.java
+***********************************
+
+
+// instance method on enclosing class
+public void doSomethingOnInstance() {
+    System.out.println("doSomethingOnInstance invoked.");
+    // invoke nested class's method via class reference
+    NestedStaticClass.getInstanceName();
+}
+

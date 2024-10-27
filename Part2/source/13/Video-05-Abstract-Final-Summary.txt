@@ -1,0 +1,23 @@
+******************************
+snippet-12-FirstFinalTest.java
+******************************
+
+
+private ExtendMeOptional() {}
+
+
+
+******************************
+snippet-13-FirstFinalTest.java
+******************************
+
+
+ExtendMeOptional objectA = new ExtendMeOptional();
+
+
+******************************
+snippet-14-FirstFinalTest.java
+******************************
+
+
+class MyFirstExtendedClass extends ExtendMeOptional {

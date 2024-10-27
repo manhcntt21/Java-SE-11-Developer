@@ -1,0 +1,155 @@
+**********************************
+snippet-03-SynchronizedMethod.java
+**********************************
+
+
+private volatile int hit;
+
+
+**********************************
+snippet-04-SynchronizedMethod.java
+**********************************
+
+
+// Method called by threads, adds player to map if not found
+// or increments value in map
+public synchronized int addHit(String player) {
+
+
+**********************************
+snippet-05-SynchronizedMethod.java
+**********************************
+
+
+public int addHit(String player) {
+    synchronized (this) {
+        this.hit++;
+    }
+    if (players.containsKey(player)) {
+        players.computeIfPresent(player, (key, val) -> ++val);
+    } else {
+        players.put(player, 1);
+    }
+
+    return this.hit;
+}
+
+
+**********************************
+snippet-06-SynchronizedMethod.java
+**********************************
+
+
+private AtomicInteger hit = new AtomicInteger(0);
+
+
+**********************************
+snippet-07-SynchronizedMethod.java
+**********************************
+
+
+public int addHit(String player) {
+
+    if (players.containsKey(player)) {
+        players.computeIfPresent(player, (key, val) -> ++val);
+    } else {
+        players.put(player, 1);
+
+    }
+    return  hit.incrementAndGet();
+}
+
+
+**********************************
+snippet-08-SynchronizedMethod.java
+**********************************
+
+
+// Present writeable output
+public String toString() {
+    return "Total " + ballType + " hits: " + this.hit.get()
+            + ", Player hits: " + players.values().stream().mapToInt(s -> s).sum()
+            + "\nPlayers List: " + players;
+}
+
+
+**********************************
+snippet-09-SynchronizedMethod.java
+**********************************
+
+
+public int addHit(String player) {
+    synchronized (players) {
+
+        if (players.containsKey(player)) {
+            players.computeIfPresent(player, (key, val) -> ++val);
+        } else {
+            players.put(player, 1);
+        }
+    }
+    return hit.incrementAndGet();
+}
+
+
+**********************************
+snippet-10-SynchronizedMethod.java
+**********************************
+
+
+private Map<String, Integer> players = Collections.synchronizedMap(new TreeMap<>());
+
+
+**********************************
+snippet-11-SynchronizedMethod.java
+**********************************
+
+
+public int addHit(String player) {
+
+    if (players.containsKey(player)) {
+        players.computeIfPresent(player, (key, val) -> ++val);
+    } else {
+        // A null is returned if no mapping was found
+        if (players.putIfAbsent(player, 1) != null) {
+            System.out.println("Encountered race condition");
+        }
+    }
+
+    return hit.incrementAndGet();
+}
+
+
+**********************************
+snippet-12-SynchronizedMethod.java
+**********************************
+
+
+public int addHit(String player) {
+
+    if (players.containsKey(player)) {
+        players.computeIfPresent(player, (key, val) -> ++val);
+    } else {
+        // A null is returned if no mapping was found
+        if (players.putIfAbsent(player, 1) != null) {
+            System.out.println("Encountered race condition");
+            players.computeIfPresent(player, (key, val) -> ++val);
+        }
+    }
+
+    return hit.incrementAndGet();
+}
+
+
+**********************************
+snippet-13-SynchronizedMethod.java
+**********************************
+
+
+// Constructor
+TheBallInTheAir() {
+    players.put("Jane", 0);
+    players.put("Mary", 0);
+    players.put("Ralph", 0);
+    players.put("Joe", 0);
+}
+

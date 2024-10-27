@@ -1,0 +1,207 @@
+**********************************
+snippet-06-GenericsComparison.java
+**********************************
+
+
+// Generic class with two type parameters
+class CombinedClass<T extends Comparable, U> {
+
+    // Create some instance variables
+    U instanceField;
+    Number instanceNumberField;
+
+    // Constructor is a generic method.  In this case the method's parameter
+    // type is upper bound to Number
+    <V extends Number> CombinedClass(U instanceField, V instanceNumber) {
+        this.instanceField = instanceField;
+        this.instanceNumberField = instanceNumber;
+        System.out.println("CombinedClass: instanceField (" +
+                instanceField.getClass().getName() + ") : " + instanceField);
+        System.out.println("CombinedClass: instanceNumber (" +
+                instanceNumber.getClass().getName() + ") : " + instanceNumber);
+    }
+
+    // generic method declares two type parameters:
+    //  -- X has no restriction but it's type is the return type of this method
+    //  -- W is a List made up of X elements.
+    // The method has three arguments:
+    //  -- t and s which are of type T (class type parameter)
+    //  -- definitions argument is a List defined by the W method type parameter.
+    public <X, W extends List<X>> X getComparisonResult(
+            T t, T s, W definitions) {
+        int result = s.compareTo(t);
+        if (result != 0) result = result < 0 ? -1 : 1;
+        result++;
+
+        return definitions.get(result);
+    }
+}
+
+
+**********************************
+snippet-07-GenericsComparison.java
+**********************************
+
+
+String s1 = "Anne";
+String s2 = "Bob";
+
+// Create an Instance of CombinedClass using String and Byte
+CombinedClass<String, Byte> c = new CombinedClass<>(
+        Byte.valueOf("1"), 2);
+
+// Using the generic method on Combined Class with types
+// String and List<String>.  Types are inferred.
+String compareString = c.getComparisonResult(s1, s2,
+        List.of("COMES AFTER", "EQUALS", "IS LISTED BEFORE"));
+
+System.out.println(s1 + " " + compareString + " " + s2);
+
+
+**********************************
+snippet-08-GenericsComparison.java
+**********************************
+
+
+// Create an Instance of CombinedClass using Integer and String
+CombinedClass<Integer, String> c2 = new CombinedClass<>(
+        "A combined Class", Byte.valueOf("5"));
+Integer i1 = 1;
+Integer i2 = 2;
+String compareString2 = c2.getComparisonResult(i1, i2,
+        List.of("IS GREATER THAN", "IS EQUAL", "IS LESS THAN"));
+
+System.out.println(i1 + " " + compareString2 + " " + i2);
+
+
+******************************
+snippet-01-GenericMethods.java
+******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 4: Generics and Collections
+Topic:  Generic Methods
+*/
+
+// Apple class, equal if val is same int
+class Apple implements Comparable<Apple> {
+    private int val;
+
+    Apple(int val) {
+        this.val = val;
+    }
+
+    public int compareTo(Apple o) {
+        return o.val - this.val;
+    }
+}
+
+// Orange class, equal if val is same int
+class Orange implements Comparable<Orange> {
+    private int val;
+
+    Orange(int val) {
+        this.val = val;
+    }
+
+    public int compareTo(Orange o) {
+        return o.val - this.val;
+    }
+}
+
+// GreenApple will equal Apple if val is same
+class GreenApple extends Apple {
+    GreenApple(int val) {
+        super(val);
+    }
+}
+
+public class GenericMethods {
+
+    // Method to compare any type of object passed
+    public int compareObjects(Object a, Object b) {
+
+        // Include custom type checking, not extensible or easily maintainable
+        if (a instanceof Comparable && b instanceof Comparable) {
+            return compareComparables((Comparable) a, (Comparable) b);
+        }
+        return -1;
+    }
+
+    // Method to compare any object implementing Comparable
+    public int compareComparables(Comparable a, Comparable b) {
+        // Include custom type checking, but does not work with subclasses
+        if (a instanceof Apple)
+            return ((Apple) a).compareTo((Apple) b);
+        else if (a instanceof Orange)
+            return ((Orange) a).compareTo((Orange) b);
+        else
+            return -1;
+    }
+
+    // Method type parameters used in arguments enforce objects passed are
+    // the same (or subclasses of) the same type and implement Comparable
+    public <T extends Comparable> int compareMatchingTypes(T a, T b) {
+        return a.compareTo(b);
+    }
+
+    public static void main(String[] args) {
+        GenericMethods g = new GenericMethods();
+
+        System.out.println("-------- Compare Apple to Apple -----");
+        // Compare Apple to Apple with all three Methods
+        System.out.println("compareObjects(Apple, Apple): Match = " +
+                (g.compareObjects(
+                        new Apple(1), new Apple(1)) == 0));
+
+        System.out.println("compareComparables(Apple, Apple): Match = "
+                + (g.compareComparables(
+                new Apple(1), new Apple(1)) == 0));
+
+        System.out.println("compareMatchingTypes(Apple, Apple): Match = "
+                + (g.<Apple>compareMatchingTypes(
+                new Apple(1), new Apple(1)) == 0));
+
+        // Compare Apple and Green Apple
+        System.out.println("\n-------- Compare Apple to GreenApple -----");
+        System.out.println("compareObjects(Apple, GreenApple): Match = "
+                + (g.compareObjects(
+                new Apple(1), new GreenApple(1)) == 0));
+
+        System.out.println("compareComparables(Apple, GreenApple): Match = "
+                + (g.compareComparables(
+                new Apple(1), new GreenApple(1)) == 0));
+
+        System.out.println("compareMatchingTypes(Apple, GreenApple): Match = "
+                + (g.<Apple>compareMatchingTypes(
+                new Apple(1), new GreenApple(1)) == 0));
+
+    }
+}
+
+
+******************************
+snippet-02-GenericMethods.java
+******************************
+
+
+// You know at compile time that you cannot compare
+// Apples and Oranges, but still you try....
+System.out.println("\n-------- Compare Apple to Orange -----");
+System.out.println("compareObjects(Orange, Apple): Match = "
+        + (g.compareObjects(new Orange(1), new Apple(1)) == 0));
+
+
+******************************
+snippet-03-GenericMethods.java
+******************************
+
+
+System.out.println("compareMatchingTypes(Orange, Apple): Match = "
+        + (g.<Apple>compareMatchingTypes(
+        new Orange(1), new Apple(1)) == 0));
+
+

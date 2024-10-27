@@ -1,0 +1,261 @@
+*************************
+snippet-01-OuterMost.java
+*************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 1: Java Fundamentals
+Topic: Inner Classes, Extras
+*/
+public class OuterMost {
+
+    private String OuterString = "Attribute of OuterMost class";
+
+    // public inner class member
+    public class PublicInner {
+        private String InnerString = "Attribute of Public inner class";
+
+        // Constructor
+        public PublicInner() {
+            // reference enclosing object's fields with simple name
+            System.out.println("PublicInner instantiated, OuterString = " +
+                    OuterString);
+            // reference enclosing object's fields with class name & this
+            System.out.println("PublicInner instantiated, OuterString = " +
+                    OuterMost.this.OuterString);
+        }
+
+    }
+
+    // package/private inner class member
+    class PackageInner {
+        // Constructor
+        public PackageInner() {
+            System.out.println("PackageInner instantiated");
+        }
+    }
+
+    // protected inner class member
+    protected class ProtectedInner {
+        // Constructor
+        public ProtectedInner() {
+            System.out.println("ProtectedInner instantiated");
+        }
+    }
+
+    // private inner class member
+    private class PrivateInner {
+        // Constructor
+        public PrivateInner() {
+            System.out.println("PrivateInner instantiated");
+        }
+    }
+}
+
+class InnerClassExtras {
+    public static void main(String[] args) {
+
+        OuterMost outer = new OuterMost();
+
+        // To access inner classes (from an unrelated class), an object
+        // reference of the enclosing class is required, using .new construct.
+
+        // Create a local variable using the public inner class
+        OuterMost.PublicInner publicInner = outer.new PublicInner();
+
+        // Create a local variable using the package-private inner class
+        OuterMost.PackageInner packageInner = outer.new PackageInner();
+
+        // Create a local variable using the protected inner class
+        OuterMost.ProtectedInner protectedInner = outer.new ProtectedInner();
+    }
+}
+
+
+*************************
+snippet-02-OuterMost.java
+*************************
+
+
+// This inner class is now two levels deep
+public class NestedInnerSecondLevel {
+    public NestedInnerSecondLevel() {
+
+        // reference enclosing object's fields with simple name
+        System.out.println("NestedInnerSecondLevel instantiated,"
+                + " OuterString = " + OuterString);
+
+        // reference enclosing object's fields with class name & this
+        System.out.println("NestedInnerSecondLevel instantiated," +
+                " OuterString = " + OuterMost.this.OuterString);
+
+        // reference enclosing object's fields with simple name
+        System.out.println("NestedInnerSecondLevel instantiated," +
+                " InnerString = " + InnerString);
+
+        // reference enclosing object's fields with class name & this
+        System.out.println("NestedInnerSecondLevel instantiated," +
+                " InnerString = " + OuterMost.PublicInner.this.InnerString);
+
+    }
+}
+
+
+*************************
+snippet-03-OuterMost.java
+*************************
+
+
+System.out.println("\n--- Accessing a class two levels deep");
+// Create a local variable for the more nested inner class using
+// previous local variable publicInner
+OuterMost.PublicInner.NestedInnerSecondLevel nested =
+        publicInner.new NestedInnerSecondLevel();
+
+
+*************************
+snippet-04-OuterMost.java
+*************************
+
+
+// Or alternately chain instantiations outer to inner...
+OuterMost.PublicInner.NestedInnerSecondLevel alternate =
+        new OuterMost()
+                .new PublicInner()
+                .new NestedInnerSecondLevel();
+
+
+*******************************
+snippet-01-TestInheritance.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 1: Java Fundamentals 
+Topic:  Nested Class, Extras
+*/
+
+public class TestInheritance extends OuterMost {
+    public static void main(String[] args) {
+        new TestInheritance().testInnerClassMembers();
+    }
+
+    private void testInnerClassMembers() {
+        // non-static method - instance of current class exists so inner
+        // classes (with the right access modifiers) are available...
+        new ProtectedInner();
+        // First Level
+        new PublicInner();
+
+    }
+}
+
+
+*******************************
+snippet-02-TestInheritance.java
+*******************************
+
+
+this.new ProtectedInner();
+// First Level
+this.new PublicInner();
+
+
+*******************************
+snippet-03-TestInheritance.java
+*******************************
+
+
+// Static method - no instance of current class so
+// cannot access the inner classes directly
+new ProtectedInner();
+new PublicInner();
+
+
+
+*******************************
+snippet-04-TestInheritance.java
+*******************************
+
+
+// Second Level
+new PublicInner().new NestedInnerSecondLevel();
+
+// This does not work
+new PublicInner().NestedInnerSecondLevel();
+
+
+*******************************
+snippet-05-TestInheritance.java
+*******************************
+
+
+public class TestInheritance extends OuterMost.PublicInner {
+
+
+*******************************
+snippet-06-TestInheritance.java
+*******************************
+
+
+// This inner class extends the inner class that was inherited
+// from the OuterMost class
+class KeepExtending extends PublicInner {
+    KeepExtending() {
+        System.out.println("Extend the inner class as an " +
+                "inherited member");
+    }
+}
+
+
+*******************************
+snippet-07-TestInheritance.java
+*******************************
+
+
+// Customized Second Level
+new KeepExtending();
+
+
+*******************************
+snippet-08-TestInheritance.java
+*******************************
+
+
+class KeepExtending extends OuterMost.PublicInner {
+
+
+*******************************
+snippet-09-TestInheritance.java
+*******************************
+
+
+// This inner class extends the inner class that was inherited
+// from the OuterMost class
+class KeepExtending extends OuterMost.PublicInner {
+    KeepExtending() {
+        System.out.println("Extend the inner class as an " +
+                "inherited member");
+    }
+
+    class ExtendingFurther extends
+            OuterMost.PublicInner.NestedInnerSecondLevel {
+        ExtendingFurther() {
+            System.out.println("Extending a deeper level of " +
+                    "an inherited member");
+        }
+    }
+}
+
+*******************************
+snippet-10-TestInheritance.java
+*******************************
+
+
+// Extending to the next level
+System.out.println("----Nesting even deeper ----");
+new KeepExtending().new ExtendingFurther();

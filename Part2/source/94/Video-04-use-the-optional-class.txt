@@ -1,0 +1,167 @@
+*****************************
+snippet-01-OptionalTests.java
+*****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Lambda Operations on Stream
+Topic: Using the Optional Class
+*/
+
+import java.util.List;
+
+// Create a CollegeStudent with a name & gpa
+class CollegeStudent {
+    private Float gpa;
+    private String name;
+
+    // Constructor
+    CollegeStudent(String name) {
+        this.name = name;
+    }
+
+    CollegeStudent(String name, float gpa) {
+        this.name = name;
+        this.gpa = gpa;
+    }
+
+    public Float getGpa() {
+        return gpa;
+    }
+
+    public void setGpa(Float gpa) {
+        this.gpa = gpa;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+}
+
+// Class to Test retrieving Gpa
+public class OptionalTests {
+    public static void main(String[] args) {
+        CollegeStudent joe = new CollegeStudent("Joe", 3.2f);
+        CollegeStudent jane = new CollegeStudent("Jane");
+
+        List.of(joe, jane)
+                .stream()
+                .forEach(OptionalTests::printStatus);
+
+    }
+
+    // Print's student's academic status
+    private static void printStatus(CollegeStudent student) {
+        System.out.print(student.getName());
+
+        if (student.getGpa() < 2.0) {
+            System.out.println(" is on academic probation");
+        } else {
+            System.out.println(" is in good standing");
+        }
+    }
+}
+
+
+*****************************
+snippet-02-OptionalTests.java
+*****************************
+
+
+// Print's student's academic status
+private static void printStatus(CollegeStudent student) {
+    System.out.print(student.getName());
+
+    if (student.getGpa() != null) {
+        if (student.getGpa() < 2.0) {
+            System.out.println(" is on academic probation");
+        } else {
+            System.out.println(" is in good standing");
+        }
+    } else System.out.println(" has an unknown gpa");
+}
+
+
+*****************************
+snippet-03-OptionalTests.java
+*****************************
+
+
+private Optional<Float> gpa = Optional.empty();
+
+
+*****************************
+snippet-04-OptionalTests.java
+*****************************
+
+
+CollegeStudent(String name, float gpa) {
+    this.name = name;
+    this.gpa = Optional.of(gpa);
+}
+
+
+*****************************
+snippet-05-OptionalTests.java
+*****************************
+
+
+public Optional<Float> getGpa() {
+    return gpa;
+}
+
+
+*****************************
+snippet-06-OptionalTests.java
+*****************************
+
+
+public void setGpa(Float gpa) {
+    this.gpa = Optional.ofNullable(gpa);
+}
+
+
+*****************************
+snippet-07-OptionalTests.java
+*****************************
+
+
+// Print's student's academic status
+private static void printStatus(CollegeStudent student) {
+    System.out.print(student.getName());
+    Optional<Float> gpa;
+    if ((gpa = student.getGpa()).isPresent()) {
+        if (gpa.get() < 2.0) {
+            System.out.println(" is on academic probation");
+        } else {
+            System.out.println(" is in good standing");
+        }
+    } else System.out.println(" has an unknown gpa");
+}
+
+
+*****************************
+snippet-08-OptionalTests.java
+*****************************
+
+
+List.of(joe, jane)
+        .stream()
+        .filter(s -> s.getGpa().isPresent())
+        .forEach(s -> System.out.println(s.getName() +
+                (s.getGpa().get() >= 2.0f
+                        ? " in good standing" :
+                        " on academic probation")));
+
+
+*****************************
+snippet-09-OptionalTests.java
+*****************************
+
+
+.filter(s -> !s.getGpa().isEmpty())
+
+

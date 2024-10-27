@@ -1,0 +1,370 @@
+************************************
+snippet-01-SerializationExample.java
+************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 13:  I/O (Fundamentals and NIO2)
+Topic: Serialization / Deserialization
+*/
+
+import java.io.*;
+
+// Class must implement Serializable if it does not extend
+// a class that implements Serializable...
+class Pet implements Serializable {
+    private String name;
+    private String type;
+
+    // No arguments constructor
+    Pet() {
+        System.out.println("Inside no args Pet constructor");
+    }
+    
+    // Constructor takes name and type of Pet
+    Pet(String name, String type) {
+        this.name = name;
+        this.type = type;
+        System.out.println("Inside Pet(name,type) constructor");
+    }
+
+    // Use IntelliJ generated toString() method
+    public String toString() {
+        return "Pet{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
+
+}
+
+public class SerializationExample {
+    public static void main(String[] args) throws IOException,
+            ClassNotFoundException {
+
+        String fileName = "Brandy.ser";
+
+        Pet originalPet = new Pet("Brandy", "Dog");
+        System.out.println("--------- Original State -----------");
+        System.out.println(originalPet);
+
+        // Use try with resources (automatically closes file) to output
+        // the Pet object
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(
+                new FileOutputStream(fileName))) {
+            // write the Pet to a file
+            outputStream.writeObject(originalPet);
+        }
+
+        Pet deserializedPet = null;
+        // Use try with resources (automatically closes file) to input
+        // the Pet object
+        try (ObjectInputStream inStream = new ObjectInputStream(
+                new FileInputStream(fileName))) {
+            try {
+                // read the Pet from a file
+                deserializedPet = (Pet) inStream.readObject();
+
+                // Need to check for EOFException    
+            } catch (EOFException e) {
+                // Ignore, end of file
+            }
+        }
+
+        System.out.println("------- Deserialized State ------");
+        System.out.println(deserializedPet);
+
+    }
+}
+
+
+************************************
+snippet-02-SerializationExample.java
+************************************
+
+
+private String breed = "Unknown";
+
+
+************************************
+snippet-03-SerializationExample.java
+************************************
+
+
+// Use IntelliJ generated toString() method
+public String toString() {
+    return "Pet{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", breed='" + breed + '\'' +
+            '}';
+}
+
+
+************************************
+snippet-04-SerializationExample.java
+************************************
+
+
+/*
+// Use try with resources (automatically closes file) to output
+// the Pet object
+try (ObjectOutputStream outputStream = new ObjectOutputStream(
+        new FileOutputStream(fileName))) {
+    // write the Pet to a file
+    outputStream.writeObject(originalPet);
+}
+
+  */
+
+
+************************************
+snippet-05-SerializationExample.java
+************************************
+
+
+private transient String breed = "Unknown";
+
+
+************************************
+snippet-06-SerializationExample.java
+************************************
+
+
+class Animal  {
+     int age;
+     Animal() {
+         System.out.println("Inside no args Animal constructor");
+     }
+}
+
+
+************************************
+snippet-07-SerializationExample.java
+************************************
+
+
+class Pet extends Animal implements Serializable {
+
+
+************************************
+snippet-08-SerializationExample.java
+************************************
+
+
+// Use IntelliJ generated toString() method
+public String toString() {
+    return "Pet{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", breed='" + breed + '\'' +
+            ", age='" + age + '\'' +
+            '}';
+}
+
+
+************************************
+snippet-09-SerializationExample.java
+************************************
+
+
+Animal(int age) {
+    System.out.println("Inside single args Animal constructor");
+}
+
+
+************************************
+snippet-10-SerializationExample.java
+************************************
+
+
+    // No arguments constructor
+    Pet() {
+        super(0);
+        System.out.println("Inside no args Pet constructor");
+    }
+    // Constructor takes name and type of Pet
+    Pet(String name, String type) {
+        super(0);
+        this.name = name;
+        this.type = type;
+        System.out.println("Inside Pet(name,type) constructor");
+    }
+
+
+************************************
+snippet-11-SerializationExample.java
+************************************
+
+
+class Animal implements Serializable {
+
+
+************************************
+snippet-12-SerializationExample.java
+************************************
+
+
+class Pet extends Animal  {
+
+
+************************************
+snippet-13-SerializationExample.java
+************************************
+
+
+try (ObjectOutputStream outputStream = new ObjectOutputStream(
+        new FileOutputStream(fileName))) {
+    // write the Pet to a file
+    outputStream.writeObject(originalPet);
+}
+
+
+************************************
+snippet-14-SerializationExample.java
+************************************
+
+
+class Animal {
+    int age;
+    int weight;
+
+    Animal() {
+        System.out.println("Inside no args Animal constructor");
+    }
+
+    Animal(int age) {
+        System.out.println("Inside single args Animal constructor");
+    }
+}
+
+
+************************************
+snippet-15-SerializationExample.java
+************************************
+
+
+class Pet extends Animal implements Serializable {
+
+
+************************************
+snippet-16-SerializationExample.java
+************************************
+
+
+public String toString() {
+    return "Pet{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", breed='" + breed + '\'' +
+            ", age='" + age + '\'' +
+            ", weight ='" + weight + '\'' +
+            '}';
+}
+
+
+************************************
+snippet-17-SerializationExample.java
+************************************
+
+
+Pet originalPet = new Pet("Brandy", "Dog");
+originalPet.age = 5;
+originalPet.weight = 30;
+
+
+************************************
+snippet-18-SerializationExample.java
+************************************
+
+
+// overrides default method on Serializable
+private void writeObject(java.io.ObjectOutputStream out)
+        throws IOException {
+}
+
+// overrides default method on Serializable
+private void readObject(java.io.ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+}
+
+
+************************************
+snippet-19-SerializationExample.java
+************************************
+
+
+// overrides default method on Serializable
+private void writeObject(java.io.ObjectOutputStream out)
+        throws IOException {
+    out.defaultWriteObject();
+}
+
+// overrides default method on Serializable
+private void readObject(java.io.ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+}
+
+
+************************************
+snippet-20-SerializationExample.java
+************************************
+
+
+// overrides default method on Serializable
+private void writeObject(java.io.ObjectOutputStream out)
+        throws IOException {
+    out.defaultWriteObject();
+    out.writeInt(age);
+    out.writeInt(weight);
+}
+
+// overrides default method on Serializable
+private void readObject(java.io.ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    age = in.readInt();
+    weight = in.readInt();
+}
+
+
+************************************
+snippet-21-SerializationExample.java
+************************************
+
+
+static int count;
+
+
+************************************
+snippet-22-SerializationExample.java
+************************************
+
+
+// Use IntelliJ generated toString() method
+public String toString() {
+    return "Pet{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", breed='" + breed + '\'' +
+            ", age='" + age + '\'' +
+            ", weight ='" + weight + '\'' +
+            ", count ='" + count + '\'' +
+            '}';
+}
+
+
+************************************
+snippet-23-SerializationExample.java
+************************************
+
+
+Pet originalPet = new Pet("Brandy", "Dog");
+originalPet.age = 5;
+originalPet.weight = 30;
+Pet.count = 10;
+
+

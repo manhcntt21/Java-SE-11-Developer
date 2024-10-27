@@ -1,0 +1,162 @@
+****************************
+snippet-06-CRUDExamples.java
+****************************
+
+
+// Person class represents data in a PERSON table
+class Person {
+    private int id;
+    private String name;
+    private int age;
+
+    // constructor
+    public Person(int id, String name, int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+}
+
+
+****************************
+snippet-07-CRUDExamples.java
+****************************
+
+
+// get data from a table and populate a list of Person
+public static List<Person> getPersonList(Connection connection) throws SQLException {
+
+    // Get all information in a record
+    String retrieveSQL =
+            "select * from PERSON ";
+
+    List<Person> data = new ArrayList<>();
+    try (Statement stmt = connection.createStatement()) {
+
+        // ResultSet will be closed automatically when statement is
+        // closed
+        ResultSet rs = stmt.executeQuery(retrieveSQL);
+
+        // Result set is an iterable set of data, here representing
+        // records returned from the select statement
+        while (rs.next()) {
+            data.add(new Person(rs.getInt("PERSON_ID"),
+                    rs.getString("NAME"),
+                    rs.getInt("AGE")));
+        }
+    }
+    return data;
+}
+
+
+****************************
+snippet-08-CRUDExamples.java
+****************************
+
+
+// Example of DML - get (read) data
+getPersonList(connection).forEach(System.out::println);
+
+
+****************************
+snippet-09-CRUDExamples.java
+****************************
+
+
+try (Statement stmt = connection.createStatement(
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY)) {
+
+
+****************************
+snippet-10-CRUDExamples.java
+****************************
+
+
+// Iterate backwards through the result set...
+rs.afterLast();
+while (rs.previous()) {
+    data.add(new Person(rs.getInt("PERSON_ID"),
+            rs.getString("NAME"),
+            rs.getInt("AGE")));
+}
+
+
+****************************
+snippet-11-CRUDExamples.java
+****************************
+
+
+try (Statement stmt = connection.createStatement(
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_UPDATABLE)) {
+
+
+****************************
+snippet-12-CRUDExamples.java
+****************************
+
+
+while (rs.previous()) {
+    if (rs.getInt("PERSON_ID") == 101) rs.updateInt("AGE", 99);
+    data.add(new Person(rs.getInt("PERSON_ID"),
+            rs.getString("NAME"),
+            rs.getInt("AGE")));
+}
+
+
+****************************
+snippet-13-CRUDExamples.java
+****************************
+
+
+// Example of DML - get (read) data
+getData(connection);
+
+
+****************************
+snippet-14-CRUDExamples.java
+****************************
+
+
+try (Statement stmt = connection.createStatement(
+        ResultSet.TYPE_SCROLL_INSENSITIVE,
+        ResultSet.CONCUR_READ_ONLY)) {
+
+    // ResultSet will be closed automatically when statement is
+    // closed
+    ResultSet rs = stmt.executeQuery(retrieveSQL);
+
+    // Iterate backwards through the result set...
+    rs.afterLast();
+    while (rs.previous()) {
+        if (rs.getInt("PERSON_ID") == 101) rs.updateInt("AGE", 99);
+        data.add(new Person(rs.getInt("PERSON_ID"),
+                rs.getString("NAME"),
+                rs.getInt("AGE")));
+    }
+} catch (SQLException se) {
+    System.out.println(se);
+}
+
+
+****************************
+snippet-15-CRUDExamples.java
+****************************
+
+
+while (rs.previous()) {
+    //if (rs.getInt("PERSON_ID") == 101) rs.updateInt("AGE", 99);
+    data.add(new Person(rs.getInt("PERSON_ID"),
+            rs.getString("NAME"),
+            rs.getInt("AGE")));
+}
+

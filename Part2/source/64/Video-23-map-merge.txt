@@ -1,0 +1,218 @@
+**************************
+snippet-06-MapExample.java
+**************************
+
+
+private static void testMerges(Map<String, Integer> m) {
+
+    System.out.println("Original State: " + m);
+    //  If Mary exists and is not null, use the function
+    System.out.println("After merge(Mary,100,val/3), return value : " +
+            m.merge("Mary", 100, (key, val) -> val / 3));
+    System.out.println("After merge(Mary,100,val/3): " + m);
+
+    System.out.println("After put(Mary, null), return value : " +
+            m.put("Mary", null));
+    System.out.println("After put(Mary, null); " + m);
+
+    // If Mary exists, and value is null, use the value, not the function
+    System.out.println("After merge(Mary,100,val/3), return value : " +
+            m.merge("Mary", 100, (key, val) -> val / 3));
+    System.out.println("After merge(Mary,100,val/3): " + m);
+
+    // If Mary exists, and value is not null , use the function
+    System.out.println("After merge(Mary,100,val/3), return value : " +
+            m.merge("Mary", 100, (key, val) -> val / 3));
+    System.out.println("After merge(Mary,100,val/3): " + m);
+
+    // If Mary exists, and return value of the function is null, Mary
+    // gets removed from map
+    System.out.println("After merge(Mary,100,null), return value : " +
+            m.merge("Mary", 100, (key, val) -> null));
+    System.out.println("After merge(Mary,100,null): " + m);
+
+    // If Nat does not exist, use the value, not the function
+    System.out.println("After merge(Nat,100,val*2), return value : " +
+            m.merge("Nat", 100, (key, val) -> val * 2));
+    System.out.println("After merge(Nat,100,val*2): " + m);
+
+    m.put("Barry", null);
+    System.out.println("Set value in Barry to null: " + m);
+    m.replaceAll((key, val) -> {
+        if (val == null) return 0;
+        else return val + 1;
+    });
+    System.out.println("replaceAll: null values get 0, " +
+            "otherwise add 1 to existing value: " + m);
+}
+
+
+**************************
+snippet-07-MapExample.java
+**************************
+
+
+System.out.println("\n--- LinkedHashMap: test merge methods ---");
+testMerges(l);
+
+
+******************************
+snippet-01-MapSetExamples.java
+******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 4: Generics and Collections
+Topic:  Collections, Map to Set methods
+*/
+
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class MapSetExamples {
+    public static void main(String[] args) {
+
+        // Use Map.of to populate a Map, with comma delimited values
+        // representing key1, value1, key2, value2 etc.
+        Map<String, Integer> treeMap = new TreeMap<>(Map.of(
+                "Mary", 30,
+                "John", 35,
+                "Ralph", 23,
+                "George", 15,
+                "Kate", 50));
+        System.out.println("Initial Values: " + treeMap);
+        // This returns a modifiable View of the Map, however, you
+        // cannot add entries.
+        Set entrySet = treeMap.entrySet();
+        entrySet.remove("John");
+        System.out.println(treeMap);
+
+    }
+}
+
+
+******************************
+snippet-02-MapSetExamples.java
+******************************
+
+
+entrySet.remove(Map.entry("John", 25));
+System.out.println(treeMap);
+
+entrySet.remove(Map.entry("John", 35));
+System.out.println(treeMap);
+
+
+******************************
+snippet-03-MapSetExamples.java
+******************************
+
+
+// Collection of just the values...
+Collection<Integer> values = treeMap.values();
+values.remove(23);
+System.out.println(treeMap);
+
+// Collection of just the keys
+Collection<String> keySet = treeMap.keySet();
+keySet.remove("Mary");
+System.out.println(treeMap);
+
+
+******************************
+snippet-04-MapSetExamples.java
+******************************
+
+
+// Add some more values to original Map.
+treeMap.putAll(Map.of(
+        "Carol", 5,
+        "Martha", 46,
+        "Mark", 33));
+System.out.println(treeMap);
+System.out.println("Size of keySet Set: " + keySet.size());
+
+
+******************************
+snippet-05-MapSetExamples.java
+******************************
+
+
+keySet.retainAll(Set.of("Carol", "Kate", "Mary", "Andrew"));
+System.out.println(treeMap);
+
+
+******************************
+snippet-06-MapSetExamples.java
+******************************
+
+
+for (String key : keySet) {
+    treeMap.put("Ralph", 33);
+}
+
+
+******************************
+snippet-07-MapSetExamples.java
+******************************
+
+
+Map<String, Integer> tCopyMutable =
+        new TreeMap<>(Map.copyOf(treeMap));
+tCopyMutable.put("Tom", 30);
+System.out.println(tCopyMutable);
+
+Map<String, Integer> tCopyImmutable = Map.copyOf(treeMap);
+tCopyImmutable.put("Tom", 30);
+System.out.println(tCopyImmutable);
+
+
+******************************
+snippet-08-MapSetExamples.java
+******************************
+
+
+tCopyMutable.put("Ralph", 25);
+System.out.println(tCopyMutable);
+tCopyMutable.entrySet().add(Map.entry("John", 35));
+System.out.println(tCopyMutable);
+
+
+******************************
+snippet-09-MapSetExamples.java
+******************************
+
+
+Map<String, Integer> immutableMap = Map.ofEntries(
+        Map.entry("Joe", 5),
+        Map.entry("John", 10),
+        Map.entry("James", 15));
+System.out.println(immutableMap);
+
+
+******************************
+snippet-10-MapSetExamples.java
+******************************
+
+
+immutableMap.putAll(Map.ofEntries(
+        Map.entry("Martha", 15),
+        Map.entry("Carol", 35)));
+System.out.println(immutableMap);
+
+
+******************************
+snippet-11-MapSetExamples.java
+******************************
+
+
+tCopyMutable.putAll(Map.ofEntries(
+        Map.entry("Martha", 15),
+        Map.entry("Carol", 35)));
+System.out.println(tCopyMutable);
+tCopyMutable.computeIfPresent("Martha", (key, val) -> val * 100);
+System.out.println(tCopyMutable);
+

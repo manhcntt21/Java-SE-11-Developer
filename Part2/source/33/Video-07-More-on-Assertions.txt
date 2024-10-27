@@ -1,0 +1,123 @@
+*****************************************************
+snippet-06-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+        if (petType == PetType.CAT || petType == PetType.DOG) {
+            if (petAge > 7) description = "SENIOR";
+            else if (petAge < 1)
+                description = (petType == PetType.CAT) ? "KITTEN" : "PUPPY";
+        }
+        // Add else if section for PARROT
+        else if (petType == PetType.PARROT) {
+            if (petAge > 45) description = "SENIOR";
+            else if (petAge < 1) description = "CHICK";
+        }
+        // Catch all for everything else
+        else {
+            // ** Internal Invariant Assertion
+            // Assumes if pet not CAT/DOG, must be GERBIL/HAMSTER
+            assert (petType == PetType.GERBIL || petType == PetType.HAMSTER);
+
+            if (petAge > 3) description = "SENIOR";
+            else if (petAge < 1)
+                description = "PUP";
+        }
+
+
+*****************************************************
+snippet-07-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+// ** Good Practice:  Post-Condition Assertion
+assert (new ArrayList(Arrays.asList(
+        new String[]{"ADULT", "SENIOR", "KITTEN", "PUPPY", "PUP",
+                "CHICK"})).
+        indexOf(description) > -1) : "No Description exists for " +
+        petType + " age " + petAge;
+
+
+*****************************************************
+snippet-08-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+// Creating data just for an assertion (not contained in assertion)
+ArrayList assertArrayList = new ArrayList(Arrays.asList(new String[]
+        {"ADULT", "SENIOR", "KITTEN", "PUPPY", "PUP", "CHICK"}));
+
+// ** Good Practice:  Post-Condition Assertion
+assert (assertArrayList.indexOf(description) > -1) :
+        "No Description exists for " + petType + " age " + petAge;
+
+
+*****************************************************
+snippet-09-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+assert (new ArrayList(Arrays.asList(new String[]
+          {"ADULT", "SENIOR", "KITTEN", "PUPPY", "PUP", "CHICK"}))
+          .indexOf(description) > -1 && petAge++ == 0) :
+          "No Description exists for " + petType + " age " + petAge;
+
+System.out.print("petAge (" + petAge + ") : ");
+
+*****************************************************
+snippet-10-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+// ** Good Practice:  Post-Condition Assertion
+assert (new ArrayList(Arrays.asList(
+        new String[]{"ADULT", "SENIOR", "KITTEN", "PUPPY", "PUP"})).
+        indexOf(description) > -1) : "No Description exists for " +
+        petType + " age " + petAge;
+
+
+*****************************************************
+snippet-11-assertion.invariant.InvariantExamples.java
+*****************************************************
+
+
+    public static void main(String[] args) {
+
+        InvariantExamples.main(args);
+
+        byte s2;
+        ....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

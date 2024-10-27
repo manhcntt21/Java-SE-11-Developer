@@ -1,0 +1,210 @@
+*******************************
+snippet-01-element.Student.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Lambda Operations on Stream
+Topic: Element to be used in sample streams
+*/
+
+package element;
+
+import java.util.Random;
+
+public
+class Student {
+
+    // This String array will be used to create a random name for each
+    // Student instance
+    private String[] namesArray = {"Allen", "Bob", "Caleb", "Don", "Fred",
+            "Greg", "Howard", "Ira", "James", "Kevin"};
+    private String name;
+
+    // Create an internal id generator
+    private static int lastId = 1000;
+    // Student id field
+    private int studentId;
+
+    // initializer assigns a name at random and studentId
+    {
+        int i = new Random().nextInt(10);
+        this.name = namesArray[i];
+        // Generate new id for new student
+        this.studentId = ++lastId;
+    }
+
+    public String toString() {
+        return "[" + this.studentId + " : " + this.name + "] ";
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+}
+
+
+****************************
+snippet-01-PeekExamples.java
+****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Lambda Operations on Stream
+Topic:  Extract stream data using map, peek and flatMap
+*/
+
+import element.Student;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class PeekExamples {
+
+    public static void main(String[] args) {
+        PeekExamples p = new PeekExamples();
+
+        // Create a studentList of 5 students
+        List<Student> firstList = Stream.generate(Student::new)
+                .limit(5).collect(Collectors.toList());
+
+        System.out.println("--------- Before Peek ---------");
+        firstList.forEach(System.out::println);
+        System.out.println("---- Peeking during stream operations ----");
+        // Create a second studentList using first and looking
+        // at elements on the Stream using peek
+        List<Student> secondList = firstList.stream()
+                .peek(System.out::print)
+                .collect(Collectors.toList());
+
+        System.out.println("\n--------- After Peek ---------");
+        firstList.forEach(System.out::println);
+
+        System.out.println("Lists contain same elements? " +
+                firstList.equals(secondList));
+
+    }
+}
+
+
+****************************
+snippet-02-PeekExamples.java
+****************************
+
+
+  // A method that has side-effects, name of student changes
+  private static void changeStudent(Student p) {
+      p.setName(p.getName() + " Doe");
+  }
+
+
+****************************
+snippet-03-PeekExamples.java
+****************************
+
+
+List<Student> thirdList =
+        firstList.stream()
+                // What happens if we call a method with side-effect?
+                .peek(PeekExamples::changeStudent)
+                // Terminal operation returns a List
+                .collect(Collectors.toList());
+
+System.out.println("firstList = " + firstList);
+System.out.println("thirdList = " + thirdList);
+
+
+***************************
+snippet-01-MapExamples.java
+***************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 8: Lambda Operations on Stream
+Topic:  Extract stream data using map, peek and flatMap
+*/
+
+import element.Student;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class MapExamples {
+
+    public static void main(String[] args) {
+        PeekExamples p = new PeekExamples();
+
+        // Create a studentList of 5 students
+        List<Student> firstList = Stream.generate(Student::new)
+                .limit(5).collect(Collectors.toList());
+
+        List<Student> secondList =
+                firstList.stream()
+                        // Using map to call changeStudent() method
+                        .map(MapExamples::changeStudent)
+                        // Terminal operation returns List
+                        .collect(Collectors.toList());
+
+        System.out.println("firstList = " + firstList);
+        System.out.println("secondList = " + secondList);
+
+        System.out.println("Both Lists have the same elements: " +
+                firstList.containsAll(secondList));
+
+    }
+
+    // This method has side-effects, name of student changes
+    private static Student changeStudent(Student p) {
+        p.setName(p.getName() + " Doe");
+        return p;
+    }
+
+}
+
+
+***************************
+snippet-02-MapExamples.java
+***************************
+
+
+// A method that transforms a student to a mapped entry
+private static Map.Entry<Integer, Student> mapStudent(Student p) {
+    return new AbstractMap.SimpleEntry<Integer, Student>(p.getStudentId(), p);
+}
+
+
+***************************
+snippet-03-MapExamples.java
+***************************
+
+
+Set firstset =
+        firstList.stream()
+                // Map a student to an Map.Entry (key,value)
+                .map(MapExamples::mapStudent)
+                // Terminal operations returns a Set
+                .collect(Collectors.toSet());
+
+System.out.println("firstset = " + firstset);
+
+

@@ -1,0 +1,10 @@
+***************************
+snippet-01-module-info.java
+***************************
+
+
+module sample.core {
+    exports sample.core;
+}
+
+

@@ -1,0 +1,268 @@
+*******************************
+snippet-01-CustomProcessor.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Annotation Processor to Examine Annotations
+*/
+
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import java.util.Set;
+
+// This processor will process ALL annotations.
+@SupportedAnnotationTypes({"*"})
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
+
+// Annotation processors extend AbstractProcessor
+public class CustomProcessor extends AbstractProcessor {
+
+    // Constructor required if used by external tools
+    public CustomProcessor() {
+
+    }
+
+    // Implementing process method to do what you want with annotations
+    public boolean process(Set<? extends TypeElement> annotations,
+                           RoundEnvironment roundEnv) {
+
+        String info = null;
+        for (TypeElement annotation : annotations) {
+            // Using getElementsAnnotatedWithAny which checks for 
+            // inherited annotations
+            System.out.println(annotation);
+            for (Element element : roundEnv.getElementsAnnotatedWithAny(
+                    annotation)) {
+
+                info = "\t" + element.getKind() + " :  " +
+                        // Strip out unnamed package information using
+                        // ternary operator
+                        ((element.getEnclosingElement()
+                                .toString().indexOf("unnamed") > -1)
+                                // If element enclosed, print enclosing
+                                // element
+                                ? "" : element.getEnclosingElement() + ".") +
+                        // element name
+                        element;
+
+                System.out.println(info);
+            }
+        }
+
+        // return true if this is the only processor permitted to
+        // process the annotations listed in SupportedAnnotationTypes
+        return false;
+    }
+}
+
+
+*********************************
+snippet-01-CustomAnnotations.java
+*********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Custom Annotations
+*/
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@interface InheritedClassAnnotation {
+
+}
+
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@interface InheritedInterfaceAnnotation {
+
+}
+
+
+******************************************
+snippet-01-InheritedAnnotationExample.java
+******************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Testing Inherited Annotations
+*/
+
+// Annotate an Interface with one that had meta-annotation @Inherited
+@InheritedInterfaceAnnotation
+interface SuperInterface {
+
+}
+
+// Annotate a Class with one that had meta-annotation @Inherited
+@InheritedClassAnnotation
+class SuperClass {
+
+}
+
+// Do not annotate this class, which extends SuperClass and implements
+// SuperInterface
+public class InheritedAnnotationExample extends SuperClass
+        implements SuperInterface {
+    public static void main(String[] args) {
+        System.out.println("Testing meta-annotations");
+    }
+}
+
+
+*********************************
+snippet-02-CustomAnnotations.java
+*********************************
+
+
+// Intended as meta-annotation
+@Retention(RetentionPolicy.RUNTIME)
+@interface AnnotationAnnotation {
+
+}
+
+// Intended for Attribute
+@Retention(RetentionPolicy.RUNTIME)
+@interface AttributeAnnotation {
+
+}
+
+// Intended for Constructor
+@Retention(RetentionPolicy.RUNTIME)
+@interface ConstructorAnnotation {
+
+}
+
+// Intended for Local Variable
+@Retention(RetentionPolicy.RUNTIME)
+@interface LocalVariableAnnotation {
+
+}
+
+// Intended for Method
+@Retention(RetentionPolicy.RUNTIME)
+@interface MethodAnnotation {
+
+}
+
+// Intended for Method Parameter
+@Retention(RetentionPolicy.RUNTIME)
+@interface MethodParameterAnnotation {
+
+}
+
+// Intended for Type (Class, Enum, Interface)
+@Retention(RetentionPolicy.RUNTIME)
+@interface TypeAnnotation {
+
+}
+
+// Intended for Type Parameter
+@Retention(RetentionPolicy.RUNTIME)
+@interface TypeParameterAnnotation {
+
+}
+
+// Intended for Type Use
+@Retention(RetentionPolicy.RUNTIME)
+@interface TypeUseAnnotation {
+
+}
+
+
+*****************************************
+snippet-01-AnnotateEverythingExample.java
+*****************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Reviewing what can be annotated
+*/
+
+// Annotating a class
+@TypeAnnotation
+public class AnnotateEverythingExample {
+
+    // Annotating a field
+    @AttributeAnnotation
+    private String aField;
+
+    // Annotating a constructor
+    @ConstructorAnnotation
+    AnnotateEverythingExample() {
+
+    }
+
+    // Annotating a method
+    @MethodAnnotation
+    // Annotating a method parameter
+    void doSomething(@MethodParameterAnnotation String s) {
+
+        // Annotating a local variable
+        @LocalVariableAnnotation
+        var localVariable = 1;
+
+        System.out.println(s);
+
+    }
+
+    // Annotating a type parameter
+    <@TypeParameterAnnotation T> T getSomething(T t) {
+        return t;
+    }
+
+    public static void main(String[] args) {
+
+        // Annotating a use of a type (TYPE_USE) in a new object
+        AnnotateEverythingExample e = new @TypeUseAnnotation AnnotateEverythingExample();
+        Object o = e;
+
+        // Annotating a use of a type (TYPE_USE) while casting
+        AnnotateEverythingExample e2 = (@TypeUseAnnotation AnnotateEverythingExample) o;
+        e.doSomething("Hello");
+
+    }
+}
+
+
+*********************************
+snippet-03-CustomAnnotations.java
+*********************************
+
+
+// Intended for Type Parameter
+@Target(ElementType.TYPE_PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+@interface TypeParameterAnnotation {
+
+}
+
+// Intended for Type Use
+@Target(ElementType.TYPE_USE)
+@Retention(RetentionPolicy.RUNTIME)
+@interface TypeUseAnnotation {
+
+}
+
+

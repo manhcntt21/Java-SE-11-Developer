@@ -1,0 +1,175 @@
+******************************************************
+snippet-01-annotations.MyFirstInheritedAnnotation.java
+******************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  @Inherited Annotation 
+*/
+
+package annotations;
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MyFirstInheritedAnnotation {
+}
+
+
+*******************************************************
+snippet-02-annotations.MySecondInheritedAnnotation.java
+*******************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  @Inherited Annotation
+*/
+
+package annotations;
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MySecondInheritedAnnotation {
+}
+
+
+***************************************
+snippet-03-TestingAnnotatedClasses.java
+***************************************
+
+
+@MyFirstInheritedAnnotation
+abstract class ParentClass {
+
+    @MyFirstInheritedAnnotation
+    public abstract void abstractMethod();
+}
+
+@MySecondInheritedAnnotation
+interface SomeInterface {
+
+    @MySecondInheritedAnnotation
+    void interfaceMethod();
+}
+
+
+***************************************
+snippet-04-TestingAnnotatedClasses.java
+***************************************
+
+
+public class TestingAnnotatedClasses extends ParentClass
+        implements SomeInterface {
+
+
+***************************************
+snippet-05-TestingAnnotatedClasses.java
+***************************************
+
+
+// Implementing abstract method of ParentClass
+public void abstractMethod() {
+    System.out.println("Implemented abstractMethod");
+}
+
+// Implementing interface's Method
+public void interfaceMethod() {
+    System.out.println("Implemented interfaceMethod");
+}
+
+
+***************************************
+snippet-06-TestingAnnotatedClasses.java
+***************************************
+
+
+// Gets declared annotations, not inherited ones
+public void showAnnotations(Object e) {
+    Annotation[] annotations = null;
+    if (e instanceof Class) annotations =
+            ((Class) e).getAnnotations();
+    else if (e instanceof Method) annotations =
+            ((Method) e).getAnnotations();
+
+
+**************************************************
+snippet-01-annotations.MyRepeatableAnnotation.java
+**************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Repeatable Annotation
+*/
+
+package annotations;
+
+import java.lang.annotation.Repeatable;
+
+// Repeatable Annotation Type requires containing annotation
+@Repeatable(MyRepeatableAnnotations.class)
+public @interface MyRepeatableAnnotation {
+    int value() default 0;
+}
+
+
+***************************************************
+snippet-01-annotations.MyRepeatableAnnotations.java
+***************************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 17 -Annotations
+Topic:  Container for a Repeatable annotation
+*/
+package annotations;
+
+// Containing Annotation Type has value which is array of
+// annotation which will be repeated
+public @interface MyRepeatableAnnotations {
+    MyRepeatableAnnotation[] value();
+}
+
+
+***************************************
+snippet-07-TestingAnnotatedClasses.java
+***************************************
+
+
+// --Marker Annotation,  Repeatable
+@MyRepeatableAnnotation
+
+// --Single Element Annotation,  Repeatable
+// Do not have to specify element name if it is 'value'
+@MyRepeatableAnnotation(10)
+public class TestingAnnotatedClasses extends ParentClass
+        implements SomeInterface {
+
+
+***********************************
+snippet-02-AnnotationProcessor.java
+***********************************
+
+
+@SupportedAnnotationTypes(
+        {
+                "annotations.*"
+        })
+

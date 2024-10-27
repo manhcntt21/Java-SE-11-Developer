@@ -1,0 +1,108 @@
+*****************************
+snippet-01-LocaleBundles.java
+*****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  Resource Bundles
+*/
+
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+public class LocaleResources {
+    public static void main(String[] args) {
+
+        Locale.setDefault(new Locale("en", "AU"));
+
+        testProperties(Locale.getDefault());
+    }
+
+    public static void testProperties(Locale locale) {
+
+        System.out.println("---- Locale Passed: [" + locale
+                + "] ---------");
+        ResourceBundle localeData = ResourceBundle.getBundle(
+                "firstBundle", locale);
+        System.out.println("\tResourceBundle class = " +
+                localeData.getClass().getName());
+        // Get the 'selected' locale
+        System.out.println("\tLocale Actually Used:  [" +
+                localeData.getLocale() + "]");
+        // Get a single valued based on a key
+        System.out.println("\tInternationalizing the word yes  = " +
+                localeData.getString("yes") + " [" + locale + "]");
+        System.out.println("\t---Key/Values in properties file---");
+        // Iterate through keys and do something
+        localeData.keySet().forEach((s) ->
+                System.out.println("\t" + s + " = " +
+                        localeData.getObject(s)));
+
+    }
+}
+
+
+*********************************
+snippet-01-firstBundle.properties
+*********************************
+
+
+# This is a comment
+# Key = Value
+yes = Yes
+no = No
+unsure = Uncertain
+
+
+************************************
+snippet-01-firstBundle_fr.properties
+************************************
+
+
+# This is a comment
+# Key = Value
+yes = Oui
+no = Non
+unsure = Pas sur de quelque chose
+
+
+*********************************************
+snippet-01-firstBundle_en_US_slang.properties
+*********************************************
+
+
+# This is a comment
+# Key = Value
+yes = Yeah Yeah Yeah
+no = Nope
+unsure = Dunno
+
+
+*****************************
+snippet-02-LocaleBundles.java
+*****************************
+
+
+testProperties(Locale.CANADA_FRENCH);
+
+
+*****************************
+snippet-03-LocaleBundles.java
+*****************************
+
+
+testProperties(Locale.US);
+
+
+*****************************
+snippet-04-LocaleBundles.java
+*****************************
+
+
+testProperties(Locale.GERMANY);
+testProperties(new Locale("en", "US", "slang")); 
+
+

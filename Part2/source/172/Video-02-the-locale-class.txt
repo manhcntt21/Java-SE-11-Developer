@@ -1,0 +1,192 @@
+****************************
+snippet-01-LocaleReview.java
+****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  Use Locale class
+*/
+
+import java.util.Arrays;
+import java.util.Locale;
+
+public class LocaleReview {
+    public static void main(String[] args) {
+
+        // List of Available Locales
+        System.out.println("Number of Locales: " +
+                Locale.getAvailableLocales().length);
+
+        System.out.println("------Hong Kong Locales ------");
+        // List only Locales with country code of "HK"
+        Arrays.stream(Locale.getAvailableLocales())
+                .filter((s) -> s.getCountry().equals("HK"))
+                .forEach((s) -> System.out.println(s + " : " +
+                        s.getDisplayName()));
+
+        System.out.println("------ Language only ------");
+        // List only Locales with country code of "US"
+        Arrays.stream(Locale.getAvailableLocales())
+                //.filter((s) -> s.getCountry().equals("US"))
+                .filter((s) -> s.getCountry().length() == 0 && s.getLanguage().length() > 0)
+                .limit(7)
+                .forEach((s) -> System.out.println(s + " : " +
+                        s.getDisplayName()));
+
+        System.out.println("------ Locales with variants ------");
+        // List only Locales with country code of "US"
+        Arrays.stream(Locale.getAvailableLocales())
+                //.filter((s) -> s.getCountry().equals("US"))
+                .filter((s) -> s.getVariant().length() > 0)
+                .forEach((s) -> System.out.println(s + " : " +
+                        s.getDisplayName() + " : " + s.getVariant()));
+
+        System.out.println("------ Locales with extensions ------");
+        // List only Locales with country code of "US"
+        Arrays.stream(Locale.getAvailableLocales())
+                //.filter((s) -> s.getCountry().equals("US"))
+                .filter((s) -> s.getExtensionKeys().size() > 0)
+                .forEach((s) -> System.out.println(s + " : " +
+                        s.getDisplayName() + " : " + s.getExtensionKeys()));
+
+        System.out.println("--------- Static fields for common Locales --------");
+
+        // Locale static variables for some specific Locales.
+        System.out.println("Locale.ENGLISH = " + Locale.ENGLISH);
+        System.out.println("Locale.FRENCH = " + Locale.FRENCH);
+        System.out.println("Locale.FRANCE = " + Locale.FRANCE);
+        System.out.println("Locale.CANADA = " + Locale.CANADA);
+        System.out.println("Locale.CANADA_FRENCH = " + Locale.CANADA_FRENCH);
+        System.out.println("--------------------------");
+
+        // Default Locale can be retrieved
+        System.out.println("Default Locale: " + Locale.getDefault());
+
+        // User friendly Display Name can be used.
+        System.out.println("DisplayName of default locale = " +
+                Locale.getDefault().getDisplayName());
+
+        // User friendly Display Name can be displayed using a different locale
+        System.out.println("DisplayName of default locale for locale.FRENCH = " +
+                Locale.getDefault().getDisplayName(Locale.FRENCH));
+    }
+}
+
+
+*****************************
+snippet-01-LocaleObjects.java
+*****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  Creating instance of a Locale class
+*/
+
+import java.util.Locale;
+
+public class LocaleObjects {
+    public static void main(String[] args) {
+
+        // Using Locale constructors
+        System.out.println("Locale(\"fr\") = " + new Locale("fr"));
+        System.out.println("Locale(\"FR\") = " + new Locale("FR"));
+        System.out.println("Locale(\"fr\",\"CA\") = " + new Locale("fr", "CA"));
+        System.out.println("Locale(\"\", \"CA\") = " + new Locale("", "CA"));
+
+        // Using Locale Constants
+        Locale l = Locale.CANADA_FRENCH;
+        System.out.println("Locale.CANADA_FRENCH = " + l);
+        l = Locale.US;
+        System.out.println("Locale.US = " + l);
+
+        // Create Locale using Locale.Builder(), you can create a Locale
+        // with an empty string as language.
+        l = new Locale.Builder().setRegion("CA").build();
+        System.out.println("Builder().setRegion(\"CA\") = " + l);
+
+        // Order does not matter when using builder.
+        l = new Locale.Builder()
+                .setRegion("CA")
+                .setLanguage("fr")
+                .build();
+        System.out.println("Builder().setRegion(\"CA\")." +
+                "setLanguage(\"fr\") = " + l);
+
+        // You can do this, but why would you?
+        l = new Locale.Builder().setRegion("CA")
+                .setLanguage("fr")
+                .setRegion("FR")
+                .build();
+        System.out.println("Builder().setRegion(\"CA\")." +
+                "setLanguage(\"fr\").setRegion(\"FR\") = " + l);
+
+        // Returns a locale for the specified IETF BCP 47 language
+        // tag string.  Introduced with JDK 7
+        System.out.println("Locale.forLanguageTag(\"fr-CA\") =" +
+                Locale.forLanguageTag("fr-CA"));
+
+        System.out.println("Locale.forLanguageTag(\"es-SP\") =" +
+                Locale.forLanguageTag("es-SP"));
+
+    }
+}
+
+
+*****************************
+snippet-02-LocaleObjects.java
+*****************************
+
+
+l = new Locale();
+
+
+*****************************
+snippet-03-LocaleObjects.java
+*****************************
+
+
+// There are no set methods on Locale
+l.setRegion("CA");
+l.setLanguage("en");
+
+
+*****************************
+snippet-04-LocaleObjects.java
+*****************************
+
+
+l = new Locale("fr",null);
+
+
+*****************************
+snippet-05-LocaleObjects.java
+*****************************
+
+
+// IETF BCP 47 language are delimited with a dash, not underscore
+ System.out.println("Locale.forLanguageTag(\"en_US\") =" +
+         Locale.forLanguageTag("en_US"));
+
+
+*****************************
+snippet-06-LocaleObjects.java
+*****************************
+
+
+l = new Locale("en", "U&S");
+System.out.println(l);
+
+l = Locale.forLanguageTag("en-U&S");
+System.out.println(l);
+
+l = new Locale.Builder().setRegion("U&S")
+        .setLanguage("en")
+        .build();
+System.out.println(l);
+

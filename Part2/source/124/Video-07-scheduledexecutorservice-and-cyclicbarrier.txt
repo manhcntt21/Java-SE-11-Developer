@@ -1,0 +1,275 @@
+*********************************
+snippet-01-ScheduledExamples.java
+*********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  Using ExecutorService with Scheduled ExecutorService
+*/
+
+import java.util.IntSummaryStatistics;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
+
+public class ScheduledExamples {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+
+        // Create some callable lambda expressions
+        Callable r1 = () -> ScheduledExamples
+                .doSomething(3, 15);
+
+        Callable r2 = () -> ScheduledExamples
+                .doSomething(5, 15);
+
+        // Set up variables to house result of scheduling task
+        ScheduledFuture<?> result1 = null;
+        ScheduledFuture<?> result2 = null;
+
+        // Create a new service using Executors class
+        ScheduledExecutorService scheduledService = null;
+        try {
+            // Factory method to get single threaded Scheduled executor
+            scheduledService = Executors.newSingleThreadScheduledExecutor();
+
+            // Schedule task
+            result1 = scheduledService.schedule(r1, 3, TimeUnit.SECONDS);
+
+            // getDelay() returns time remaining before execution starts
+            System.out.println("Task should start in " +
+                    result1.getDelay(TimeUnit.SECONDS) + " seconds");
+
+            // Schedule task
+            result2 = scheduledService.schedule(r2, 4, TimeUnit.SECONDS);
+
+            // etDelay() returns time remaining before execution starts
+            System.out.println("Task should start in " +
+                    result2.getDelay(TimeUnit.SECONDS) + " seconds");
+
+        } finally {
+            if (scheduledService != null) {
+                scheduledService.shutdown();
+
+                // Wait no longer than 4 seconds for completion confirmation
+                scheduledService.awaitTermination(4, TimeUnit.SECONDS);
+
+                // Print Results
+                if (result1.isDone()) {
+                    System.out.println(result1.get());
+                }
+                if (result2.isDone()) {
+                    System.out.println(result2.get());
+                }
+            }
+        }
+    }
+
+    // Method returns a Stream pipeline that counts by the seed number
+    // up until maxNumber is reached.
+    private static IntSummaryStatistics doSomething(int seed, int maxNumber) {
+        return Stream.iterate(seed, (s) -> s <= maxNumber, (t) -> t + seed)
+                .mapToInt((s) -> s)
+                .peek((s) -> {
+                    System.out.print("[" + seed + "'s] " + s + ", ");
+                    if (s == maxNumber) System.out.println("");
+                })
+                .summaryStatistics();
+
+    }
+}
+
+
+*********************************
+snippet-01-ScheduleMultiples.java
+*********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  Using ExecutorService with Schedule ExecutorService
+*/
+
+import java.util.IntSummaryStatistics;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
+
+public class ScheduleMultiples {
+    private static long talley;
+
+    private static void addToTalley(long count) {
+        talley += count;
+
+    }
+
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+
+        // Create some callable lambda expressions
+        Runnable r1 = () -> {
+            IntSummaryStatistics sums = ScheduleMultiples
+                    .doSomething(3, 15);
+            System.out.println(sums);
+            // Each task increments talley by 5
+            ScheduleMultiples.addToTalley(sums.getCount());
+        };
+
+        // Set up variables for result of scheduling task
+        ScheduledFuture<?> result1 = null;
+
+        // Create a new service using Executors class
+        ScheduledExecutorService scheduledService = null;
+        try {
+            // Factory method to get single threaded Scheduled executor
+            scheduledService = Executors.newSingleThreadScheduledExecutor();
+
+            // Schedule task
+            result1 = scheduledService.scheduleWithFixedDelay(r1, 2, 2, TimeUnit.SECONDS);
+
+            // When talley = 25, 5 tasks were executed
+            while (ScheduleMultiples.talley < 25) {
+                Thread.sleep(3000);
+            }
+
+        } finally {
+            if (scheduledService != null) {
+                scheduledService.shutdown();
+
+                // Wait no longer than 4 seconds for completion confirmation
+                scheduledService.awaitTermination(4, TimeUnit.SECONDS);
+
+                System.out.println("Final talley = " + talley);
+            }
+        }
+    }
+
+    // Method returns a Stream pipeline that counts by the seed number
+    // up until maxNumber is reached.
+    private static IntSummaryStatistics doSomething(int seed, int maxNumber) {
+        return Stream.iterate(seed, (s) -> s <= maxNumber, (t) -> t + seed)
+                .mapToInt((s) -> s)
+                .peek((s) -> {
+                    System.out.print("[" + seed + "'s] " + s + ", ");
+                    if (s == maxNumber) System.out.println("");
+                })
+                .summaryStatistics();
+
+    }
+}
+
+
+************************************
+snippet-01-CyclicBarrierExample.java
+************************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  Using CyclicBarrier
+*/
+
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.*;
+
+public class CyclicBarrierExample {
+    public static void main(String[] args) throws Exception {
+
+        // Construct a CyclicBarrier, 
+        // First arg # of parties (tasks)
+        // Second arg Action is a Runnable
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(4,
+                () -> {
+                    System.out.println("Confirming step is complete");
+                });
+
+        // Set up a callable local variable
+        Callable<Boolean> r = () -> {
+
+            // All threads execute step 1
+            step(1);
+
+            // All threads execute step 2
+            step(2);
+
+            return true;
+        };
+
+        // Fixed Threads = Will be parties on CyclicBarrier
+        ExecutorService service = Executors.newFixedThreadPool(4);
+        // Invoke four callable tasks, all the same
+        service.invokeAll(List.of(r, r, r, r));
+
+        System.out.println("Shutting service down");
+        service.shutdown();
+
+    }
+
+    public static void step(int stepNo) throws Exception {
+        int ms = new Random().nextInt(5) * 1000;
+        System.out.println(Thread.currentThread().getName() +
+                " waiting for " + ms + " milliseconds to start step " + stepNo);
+        Thread.sleep(ms);
+
+        System.out.println(Thread.currentThread().getName() +
+                " completed step " + stepNo);
+
+    }
+
+}
+
+
+************************************
+snippet-02-CyclicBarrierExample.java
+************************************
+
+
+// Set up a callable local variable
+Callable<Boolean> r = () -> {
+
+    // All threads execute step 1
+    step(1);
+    cyclicBarrier.await();
+
+
+************************************
+snippet-03-CyclicBarrierExample.java
+************************************
+
+
+CyclicBarrier cyclicBarrier = new CyclicBarrier(2,
+        () -> {
+            System.out.println("Confirming step is complete");
+        });
+
+
+************************************
+snippet-04-CyclicBarrierExample.java
+************************************
+
+
+ // Fixed Threads < Parties on CyclicBarrier
+ExecutorService service = Executors.newFixedThreadPool(2);
+
+
+************************************
+snippet-05-CyclicBarrierExample.java
+************************************
+
+
+Callable<Boolean> r = () -> {
+
+    // All threads execute step 1
+    step(1);
+    try {
+        cyclicBarrier.await(5, TimeUnit.SECONDS);
+    } catch (BrokenBarrierException e) {
+        System.out.println("Barrier broken = "
+                + cyclicBarrier.isBroken());
+        System.out.println("Waited but then released...");
+    }
+

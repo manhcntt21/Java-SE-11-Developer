@@ -1,0 +1,217 @@
+*******************************
+snippet-07-FilesAndStreams.java
+*******************************
+
+
+System.out.println("-----------------------------------");
+System.out.println("Find results for " + src +
+        " Directory, Regular files starting with 'F'");
+System.out.println("-----------------------------------");
+// Need to wrap in try/resources or try/catch so that directory
+// is appropriately closed
+int maxDepth = 5;
+try (Stream<Path> str = Files.find(src, maxDepth,
+        (f, a) -> {
+            return
+                    f.getFileName().
+                            toString().startsWith("F")
+                            &&
+                            a.isRegularFile();
+        })
+) {
+    str
+            .limit(8)
+            .forEach(System.out::println);
+} catch (IOException io) {
+    System.out.println("Problem with find " + io);
+}
+
+
+*******************************
+snippet-08-FilesAndStreams.java
+*******************************
+
+
+// Check files, interested in those modified in last x hours
+int hrsToCheck = 8;
+// Translate into milliseconds
+int elapsedMs = hrsToCheck * 60 * 60 * 1000;
+// Get the current time in milliseconds
+long now = System.currentTimeMillis();
+
+System.out.println("-----------------------------------");
+System.out.println("Find results for " + src + " Directory, " +
+        "Regular files modified in last " + hrsToCheck + " hours");
+System.out.println("-----------------------------------");
+
+// Need to wrap in try/resources or try/catch so that stream
+// is appropriately closed
+try (Stream<Path> str = Files.find(src, maxDepth,
+        // f below represents the Path element on the stream,
+        // a below represents the BasicFileAttributes belong to f
+        (f, a) -> {
+            return
+                    // Check modified time to the elapsed time in ms.
+                    (now - a.lastModifiedTime().toMillis())
+                            < elapsedMs
+                            &&
+                            a.isRegularFile();
+        })
+) {
+    str
+            .forEach(System.out::println);
+
+} catch (IOException io) {
+    System.out.println("Problem with find " + io);
+}
+
+
+***********************************
+snippet-01-FilesAndLinesStream.java
+***********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 13:  I/O (Fundamentals and NIO2)
+Topic: Files static methods reading files that return Stream
+*/
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class FilesAndLinesStream {
+    public static void main(String[] args) {
+
+        Path p = Paths.get("SomeData.csv");
+        createTheFile(p);
+
+        System.out.println("---- Reading lines from a file" +
+                " with Files.readAllLines ----");
+
+        // Opening/Closing file seamless and does not require being
+        // part of try with resources.  Throws IOException
+        try {
+            Files.readAllLines(p).forEach(System.out::println);
+        } catch (IOException io) {
+            System.out.println(io);
+        }
+
+        System.out.println("---- Reading lines from a file" +
+                " with Files.lines ----");
+
+        // File stays open while stream is open.  This method needs to be
+        // enclosed in try-with-resources or similar.  Throws IOException
+        try (Stream<String> str = Files.lines(p)) {
+            str
+                    .forEach(System.out::println);
+        } catch (IOException io) {
+            System.out.println(io);
+        }
+
+    }
+
+    // Create a test file.
+    private static void createTheFile(Path p) {
+
+        try {
+            // Delete test file if it exists
+            Files.deleteIfExists(p);
+
+            List<String> list = List.of(
+                    "1,George,ABC",
+                    "2,Carol,DEF",
+                    "3,Mary,EFG",
+                    "4,Ralph,ABC",
+                    "5,Arthur,ABC",
+                    "6,Maggie,DEF",
+                    "7,Brandy,EFG"
+            );
+
+            // Write List<String to the file in a single line
+            Files.write(p, list);
+
+        } catch (IOException io) {
+            System.out.println(io);
+        }
+    }
+}
+
+
+***********************************
+snippet-02-FilesAndLinesStream.java
+***********************************
+
+
+p = Paths.get("src/FilesAndLinesStream.java");
+System.out.println("---- Comments in " +
+        "FilesAndLinesStream.java  ----");
+
+// File stays open while stream is open.  This method needs to be
+// enclosed in try-with-resources or similar.  
+try (Stream<String> str = Files.lines(p)) {
+    str
+            .map(s -> s.strip())
+            .filter((s) -> s.startsWith("//"))
+            .map(s -> s.replaceAll("//", ""))
+            .forEach(System.out::println);
+} catch (IOException io) {
+    System.out.println(io);
+}
+
+
+***********************************
+snippet-03-FilesAndLinesStream.java
+***********************************
+
+
+p = Paths.get("SomeData.csv");
+System.out.println("------ Using pipeline reduction (count) " +
+        "on a file ----");
+
+long recordCount;
+// Count the lines (records) in a file
+try (Stream<String> str = Files.lines(p)) {
+    recordCount = str
+            .count();
+
+    System.out.println("records in " + p + " = " + recordCount);
+} catch (IOException io) {
+    System.out.println(io);
+}
+
+
+***********************************
+snippet-04-FilesAndLinesStream.java
+***********************************
+
+
+System.out.println("------ Using pipeline collect (groupingBY) " +
+        "on a file ----");
+try (Stream<String> str = Files.lines(p)) {
+    str
+            // Collecting data into a TreeMap<String, Map<String,String>,
+            .collect(Collectors.groupingBy((s) -> s.split(",")[2],
+                    TreeMap::new,
+                    Collectors.toMap(
+                            // sub map is Id, Name
+                            (s) -> s.split(",")[0],
+                            (s) -> s.split(",")[1])
+
+            ))
+            // entrySet() is method on TreeMap
+            .entrySet()
+            // Get a stream from the entries
+            .stream()
+            // Print each element
+            .forEach(System.out::println);
+
+} catch (IOException io) {
+    System.out.println(io);
+}
+

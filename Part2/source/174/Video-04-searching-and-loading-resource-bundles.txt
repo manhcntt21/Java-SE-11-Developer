@@ -1,0 +1,168 @@
+*********************************
+snippet-01-firstBundle_en_CA.java
+*********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  ListResourceBundle
+*/
+
+import java.util.ListResourceBundle;
+
+public class firstBundle_en_CA extends ListResourceBundle {
+
+    protected Object[][] getContents() {
+        return new Object[][]{
+                {"yes", "Yea"},
+                {"no", "Nah"},
+                {"unsure", "Not sure"}
+        };
+    }
+}
+
+
+*********************************
+snippet-02-firstBundle_en_CA.java
+*********************************
+
+
+testProperties(Locale.CANADA);
+
+
+************************
+snippet-01-Employee.java
+************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  Class to be used as a Resource Element
+*/
+
+public class Employee {
+    private String name;
+    private String dept;
+    private String title;
+
+    // Constructor
+    Employee(String name,
+             String dept,
+             String title) {
+        System.out.println("Constructing Employee");
+        this.name = name;
+        this.dept = dept;
+        this.title = title;
+    }
+
+    // override toString
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", dept='" + dept + '\'' +
+                ", title='" + title + '\'' +
+                '}';
+    }
+}
+
+
+****************************
+snippet-01-SecondBundle.java
+****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  ListResourceBundle
+*/
+
+import java.util.ListResourceBundle;
+
+public class SecondBundle extends ListResourceBundle {
+
+    protected Object[][] getContents() {
+        return new Object[][]{
+                {"default", "Yes"},
+                {"synonyms", new String[]{"Yea", "Yep", "Sure", "Of course"}},
+                {"jane", new Employee("Jane", "HR", "Manager")},
+                {"age", 40}
+        };
+    }
+}
+
+
+****************************
+snippet-01-SecondBundle.java
+****************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  ListResourceBundle
+*/
+
+import java.util.ListResourceBundle;
+
+public class SecondBundle extends ListResourceBundle {
+
+    protected Object[][] getContents() {
+        return new Object[][]{
+                {"default", "Yes"},
+                {"synonyms", new String[]{"Yea", "Yep", "Sure", "Of course"}},
+                {"jane", new Employee("Jane", "HR", "Manager")},
+                {"age", 40}
+        };
+    }
+}
+
+
+********************************
+snippet-01-LocaleBundleTest.java
+********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 16:  Localization
+Topic:  Using ResourceBundles
+*/
+
+import java.util.Arrays;
+import java.util.ResourceBundle;
+
+public class LocaleBundleTest {
+    public static void main(String[] args) {
+
+        // You'll note that you can invoke getBundle without passing
+        // a locale, the default locale will be used
+        ResourceBundle localeData = ResourceBundle.getBundle(
+                "SecondBundle");
+
+        // Getting all values using getObject with key
+        localeData.keySet().forEach((s) ->
+                System.out.println("\t" + s + " = " +
+                        localeData.getObject(s)));
+
+        // Getting an array of String from bundle
+        String[] synonyms = localeData.getStringArray("synonyms");
+        System.out.println(Arrays.toString(synonyms));
+
+        // Getting an object from bundle and casting
+        Employee jane = (Employee) localeData.getObject("jane");
+        System.out.println(jane);
+
+        // Getting a primitive from bundle and casting
+        int age = (int) localeData.getObject("age");
+        System.out.println("age is " + age);
+    }
+}
+

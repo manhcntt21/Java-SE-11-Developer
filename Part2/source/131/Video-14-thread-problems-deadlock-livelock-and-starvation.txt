@@ -1,0 +1,310 @@
+*******************************
+snippet-01-DeadLockExample.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  DeadLock Example
+*/
+
+// Simple Neighbor class, has a name
+class Neighbor {
+    private final String name;
+
+    // Constructor
+    public Neighbor(String name) {
+        this.name = name;
+    }
+
+    // synchronized method cannot execute if the instance is locked,
+    // will lock instance when operation is invoked, and release lock
+    // when operation completes
+    public synchronized void greet(Neighbor neighbor) {
+        System.out.println("Hi " + neighbor.name
+                + ", how are you?");
+        System.out.println(this.name + "'s thread is blocked, waiting for "
+                + neighbor.name + " to respond before releasing lock.");
+
+        // lock on current instance will not be released until this method
+        // completes, but respond cannot be invoked because the neighbor
+        // instance is blocked waiting for current instance to unlock
+        neighbor.respond(this);
+    }
+
+    // synchronized method cannot execute if the instance is locked,
+    // Must wait for lock on instance to be released
+    public synchronized void respond(Neighbor neighbor) {
+        System.out.println("I am fine, " + neighbor.name +
+                ", how are the kids? ");
+    }
+
+}
+
+// Simple deadlock example
+public class DeadLockExample {
+
+    public static void main(String[] args) {
+        // Create two neighbors
+        Neighbor dave = new Neighbor("Dave");
+        Neighbor craig = new Neighbor("Craig");
+
+        // Create and execute two threads, 
+        // each has the neighbor greet the other.
+        new Thread(() -> dave.greet(craig)).start();
+        new Thread(() -> craig.greet(dave)).start();
+    }
+}
+
+
+*******************************
+snippet-02-DeadLockExample.java
+*******************************
+
+
+public void respond(Neighbor neighbor) {
+    System.out.println("I am fine, " + neighbor.name +
+            ", how are the kids? ");
+}
+
+
+*******************************
+snippet-03-DeadLockExample.java
+*******************************
+
+
+public synchronized void greet(Neighbor neighbor) {
+    System.out.println("Hi " + neighbor.name
+            + ", how are you?");
+    
+    neighbor.respond(this);
+}
+
+
+*******************************
+snippet-01-LivelockExample.java
+*******************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  LiveLock Example
+*/
+
+// The Chat represents the 'object' that will be shared
+class Chat {
+    private Participant participant;
+
+    public Chat(Participant participant) {
+        this.participant = participant;
+    }
+
+    public Participant getParticipant() {
+        return participant;
+    }
+
+    public synchronized void setParticipant(Participant d) {
+        participant = d;
+    }
+
+}
+
+// Participant in the chat
+class Participant {
+
+    private String name;
+
+    // Chat will get passed back and forth while a Participant
+    // irritated.
+    private boolean irritated = true;
+
+    // Some Participant's must have the last word
+    private boolean mustHaveLastWord;
+
+    public Participant(String name, boolean mustHaveLastWord) {
+        this.name = name;
+        this.mustHaveLastWord = mustHaveLastWord;
+    }
+
+    public boolean isIrritated() {
+        return irritated;
+    }
+
+    public void setIrritated(boolean irritated) {
+        this.irritated = irritated;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public synchronized void converse(Chat conversation, Participant respondent) {
+
+        // While the participant is irritated and has something to say
+        while (isIrritated()) {
+            // if other person talking, wait patiently...
+            if (conversation.getParticipant() != this) {
+                try {
+                    wait(250);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Something interrupted");
+                }
+                continue;
+            }
+            // Get the word in
+            System.out.println(getName() +
+                    " : This is what I have to say to that, " +
+                    respondent.getName());
+
+            // Allow other person to respond...
+            conversation.setParticipant(respondent);
+
+            // If the participant is one of those people, there is
+            // no way to change this...
+            this.irritated = mustHaveLastWord;
+
+        }
+        // If one of the participant's does not need last word,
+        // Conversation can end.
+        System.out.println(getName() +
+                " :Catch you later, " + respondent.getName());
+        respondent.setIrritated(false);
+    }
+}
+
+public class LivelockExample {
+
+    public static void main(String[] args) throws InterruptedException {
+        // Create two participants
+        Participant chattyCathy = new Participant("Cathy", true);
+        Participant windbagWill = new Participant("Will", true);
+
+        // Create the shared resource, with an active participant
+        Chat frustratingConversation = new Chat(chattyCathy);
+
+        // Create two threads one for each participant
+        Thread cathy = new Thread(
+                () -> chattyCathy.converse(frustratingConversation, windbagWill));
+
+        Thread will = new Thread(new Thread(
+                () -> windbagWill.converse(frustratingConversation, chattyCathy)));
+
+        // Kick off each thread
+        cathy.start();
+        will.start();
+
+    }
+}
+
+
+*******************************
+snippet-02-LivelockExample.java
+*******************************
+
+
+Participant windbagWill = new Participant("Will", false);
+
+
+*********************************
+snippet-01-StarvationExample.java
+*********************************
+
+
+/*
+The Learn Programming Academy
+Java SE 11 Developer 1Z0-819 OCP Course - Part 2
+Section 11: Concurrency
+Topic:  Starvation Example
+*/
+
+import java.util.Arrays;
+
+public class StarvationExample {
+    // Create the shared Object that will cause the contention issues
+    private static Object sharedObject = new Object();
+
+    // Method will test which threads are starved.
+    public static void main(String[] args)
+            throws InterruptedException {
+
+        // Create an array of CounterThread threads
+        Thread[] threads = new Thread[4];
+        for (int i = 0; i < 4; i++) {
+            threads[i] = new CounterThread();
+        }
+
+        // Start each thread running
+        for (Thread th : threads) {
+            th.start();
+        }
+
+        // Report on the progress of each thread...
+        for (int i = 0; i < 5; i++) {
+            Thread.sleep(1000);
+            System.out.println("-----Progress after: " + (i + 1) + " seconds----");
+
+            Arrays.stream(threads)
+                    .forEach(System.out::println);
+        }
+
+        // Interrupt each thread
+        for (Thread th : threads) {
+            th.interrupt();
+        }
+
+        // Print out final report
+        System.out.println("------- Final results -------");
+        Arrays.stream(threads)
+                .forEach(System.out::println);
+    }
+
+    // Nested Thread class
+    private static class CounterThread extends Thread {
+        // Each thread maintains a counter that represents its progress
+        private int counter;
+
+        public void run() {
+
+            // This loop will continue to run until the thread
+            // is interrupted.
+            while (true) {
+                // sharedObject locked, preventing other threads from
+                // accessing sharedObject until lock is released
+                synchronized (sharedObject) {
+                    // Increment counter
+                    counter++;
+                    try {
+                        // Use Thread.sleep to consume a bit of time,
+                        // to keep shared object blocked
+                        Thread.sleep(200);
+
+                    } catch (InterruptedException e) {
+                        break;
+
+                    }
+                }
+            }
+        }
+
+        // Format a simple output string
+        public String toString() {
+            return getName()
+                    + ": counter = " + counter;
+        }
+    }
+}
+
+
+*********************************
+snippet-02-StarvationExample.java
+*********************************
+
+
+// Thread waits until awakened, typically by being notified
+// or interrupted, or until time specified has elapsed.
+sharedObject.wait(200);
+
